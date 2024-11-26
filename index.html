@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交互界面</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/787740fea7.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧导航栏 -->
+        <div class="sidebar">
+            <button class="nav-btn" data-content="map"><i class="fas fa-map-marker-alt"></i> map</button>
+            <button class="nav-btn" data-content="friends"><i class="fas fa-users"></i> friends</button>
+            <button class="nav-btn" data-content="competition"><i class="fas fa-trophy"></i> competition</button>
+            <button class="nav-btn" data-content="music"><i class="fas fa-music"></i> music</button>
+            <button class="nav-btn" data-content="settings"><i class="fas fa-cog"></i> settings</button>
+            <button class="nav-btn" data-content="other"><i class="fas fa-ellipsis-h"></i> other</button>
+        </div>
+
+        <!-- 主显示区域 -->
+        <div class="main-content">
+        <div id="map" class="content hidden"><img src="images/map.jpg" alt="Map" class="content-image"></div>
+        <div id="friends" class="content hidden"><img src="images/friends.jpg" alt="Friends" class="content-image"></div>
+        <div id="competition" class="content hidden"><img src="images/competition.jpg" alt="Competition" class="content-image"></div>
+        <div id="music" class="content hidden"><img src="images/music.jpg" alt="Music" class="content-image"></div>
+        <div id="settings" class="content hidden"><img src="images/settings.jpg" alt="Settings" class="content-image"></div>
+        <div id="other" class="content hidden"><img src="images/more.jpg" alt="More" class="content-image"></div>
+
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
