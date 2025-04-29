@@ -35,7 +35,7 @@ body {
     width: 80%;
     margin: 10px 0;
     padding: 10px;
-    background-color: #555;
+    background-color:  transparent; /* 默认没有背景 */
     color: white;
     border: none;
     border-radius: 5px;
@@ -84,7 +84,7 @@ body {
 
 /* 为被选中按钮设置样式 */
 .nav-btn.active {
-    background-color: #007bff; /* 蓝色背景 */
+    background-color: rgba(71, 91, 165, 1); /* 和主界面一样的颜色 */
     color: white; /* 文字白色 */
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* 增加按钮的外部光晕效果 */
     font-weight: bold; /* 文字加粗 */
