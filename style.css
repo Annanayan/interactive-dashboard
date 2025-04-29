@@ -11,8 +11,9 @@ body{
 /* ---------- 布局 ---------- */
 .container{
   display:flex;
-  width:90%;height:90%;
-  max-width:1400px;
+  width:85%;                    /* ↓ 更窄一些 */
+  height:90%;
+  max-width:1200px;             /* ↓ 原 1400 → 1200 */
   border-radius:10px;
   overflow:hidden;
   background:#fff;
@@ -27,24 +28,32 @@ body{
 }
 .main-content{
   flex:1;display:flex;flex-direction:column;
-  background:#475BA5; /* 蓝底确保一致 */
+  background:#475BA5;
   overflow:hidden;
 }
 
 /* ---------- 顶部工具栏 ---------- */
 .header-bar{
-  position:sticky;top:0;right:0;left:0;
+  position:relative;                 /* 允许中间绝对居中 */
   height:60px;
   background:#475BA5;
-  display:flex;align-items:center;justify-content:flex-end;
-  gap:18px;padding:0 20px;
-  z-index:10;
+  display:flex;align-items:center;
+  padding:0 20px;
+  gap:18px;
 }
 .header-bar input{
-  width:180px;padding:6px 10px;border-radius:6px;border:none;
+  width:190px;padding:6px 10px;border-radius:6px;border:none;
 }
+
+/* 右侧三图标：利用第 1 个图标推到右端 */
 .header-bar i{color:#fff;font-size:18px;cursor:pointer}
-.header-profile{display:flex;align-items:center;gap:6px}
+.header-bar i:first-of-type{margin-left:auto}
+
+/* 中间头像 + 名字绝对水平居中 */
+.header-profile{
+  position:absolute;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:6px;
+}
 .profile-icon{width:28px;height:28px;border-radius:50%}
 .header-profile span{color:#fff;font-weight:bold}
 
@@ -87,11 +96,4 @@ body{
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   gap:26px;width:100%;
 }
-.book-item{display:flex;flex-direction:column;align-items:center;transition:transform .3s}
-.book-item:hover{transform:scale(1.06)}
-.book-image{width:100%;border-radius:10px}
-.book-title{margin-top:8px;color:#fff;font-weight:bold;text-align:center;font-size:15px}
-
-/* 外部 link 区域 */
-.external-link{width:100%;display:flex;justify-content:center;align-items:center}
-.external-link a{color:#fff;font-size:22px;text-decoration:underline;font-weight:bold}
+.book-item{display:flex;
