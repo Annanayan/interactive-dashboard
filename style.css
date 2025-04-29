@@ -138,6 +138,8 @@ body{
 }
 .book-item:hover {
   transform: scale(1.14);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); /* 发光 */
+
 }
 
 .book-image {
@@ -159,8 +161,42 @@ body{
 }
 
 
-
-
 /* 外部 link 区域 */
 .external-link{width:100%;display:flex;justify-content:center;align-items:center}
 .external-link a{color:#fff;font-size:22px;text-decoration:underline;font-weight:bold}
+
+.magic-switch {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(71, 91, 165, 0.9);
+  color: white;
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  transition: all 0.4s ease;
+}
+.magic-switch:hover {
+  transform: rotate(20deg) scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+body.night-mode {
+  background-color: #1e1e3f;
+}
+.container {
+  background-color: #2a2a5a;
+}
+.main-content {
+  background-color: #1e1e3f;
+}
+.header-bar {
+  background-color: #1e1e3f;
+}
+.sidebar {
+  background-color: rgba(50, 70, 150, 0.9);
+}
+
+
