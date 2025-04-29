@@ -19,3 +19,7 @@ buttons.forEach(btn=>{
     });
   });
 });
+// --- 魔法棒切换夜间模式 ---
+function toggleTheme() {
+  document.body.classList.toggle("night-mode");
+}
