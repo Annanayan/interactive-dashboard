@@ -54,7 +54,7 @@ body {
 }
 
 /* 为被选中按钮设置样式 */
-.nav-btn.active 
+.nav-btn.active， 
 .nav-btn.active:hover {
     background-color: #475BA5; /* 直接写主屏幕颜色，100%不透明 */
     color: white; /* 文字白色 */
@@ -113,15 +113,17 @@ body {
     transition: transform 0.3s ease; /* 动画平滑过渡 */
 }
 
-.logo:hover {
-    transform: scale(1.05); /* 悬停时放大一点 */
-}
+
 
 .logo-image {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-    border-radius: 8px; /* 图片稍微圆角，可选 */
+    width: 60px;
+    height: 60px;
+    margin-right: 12px;
+    border-radius: 10px; /* 图片稍微圆角，可选 */
+    transition: transform 0.6s ease; /* 顺便加动画，后面旋转要用 */
+}
+.logo-image:hover {
+    transform: rotate(360deg);
 }
 
 .logo-text {
