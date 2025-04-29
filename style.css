@@ -43,7 +43,17 @@ body{
 .header-bar input{
   width:180px;padding:6px 10px;border-radius:6px;border:none;
 }
-.header-bar i{color:#fff;font-size:18px;cursor:pointer}
+.header-bar i {
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.3s ease; /* 平滑放大 */
+}
+
+.header-bar i:hover {
+  transform: scale(1.3); /* 悬停时放大 30% */
+}
+
 .header-profile{display:flex;align-items:center;gap:6px}
 .profile-icon {
   width: 32px;
