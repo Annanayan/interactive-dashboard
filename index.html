@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Math Village</title>
+
+  <!-- 外部资源 -->
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/787740fea7.js" crossorigin="anonymous"></script>
 </head>
@@ -27,31 +29,30 @@
 
     <!-- ▸▸▸ 主 区 域 ◂◂◂ -->
     <main class="main-content">
-      <!-- 顶部工具栏（分三段） -->
+      <!-- 顶部工具栏（sticky） -->
       <header class="header-bar">
-        <!-- 左：搜索 -->
-        <div class="header-left">
-          <input type="text" placeholder="Search…" />
-        </div>
-
-        <!-- 中：头像 + 名字 -->
-        <div class="header-center">
+        <input type="text" placeholder="Search…" />
+        <i class="fas fa-bell"></i>
+        <i class="fas fa-cog"></i>
+        <i class="fas fa-palette"></i>
+        <div class="header-profile">
           <img src="images/Anna.png" class="profile-icon" />
           <span>Anna</span>
-        </div>
-
-        <!-- 右：功能图标 -->
-        <div class="header-right">
-          <i class="fas fa-bell"></i>
-          <i class="fas fa-cog"></i>
-          <i class="fas fa-palette"></i>
         </div>
       </header>
 
       <!-- 动态内容区 -->
-      <section id="MainPage"        class="content active"><img src="images/Main page.png"         class="full-image" /></section>
-      <section id="Daily Review"    class="content hidden"><img src="images/Daily Review.png"    class="full-image" /></section>
-      <section id="Daily Practice"  class="content hidden"><div class="external-link"><a href="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754" target="_blank">Click here to start your Daily Practice!</a></div></section>
+      <section id="MainPage"        class="content"><img src="images/Main page.png"         class="full-image" /></section>
+      <section id="Daily Review"    class="content hidden"><img src="images/Daily Review.png" class="full-image" /></section>
+
+      <section id="Daily Practice"  class="content hidden">
+        <div class="external-link">
+          <a href="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754" target="_blank">
+            Click here to start your Daily Practice!
+          </a>
+        </div>
+      </section>
+
       <section id="Math Stories"    class="content hidden">
         <div class="book-grid">
           <div class="book-item"><img src="images/Infinity and Me.png"      class="book-image"><div class="book-title">Infinity and Me</div></div>
@@ -64,6 +65,7 @@
           <div class="book-item"><img src="images/Sir Cumference (2).png"   class="book-image"><div class="book-title">Sir Cumference (2)</div></div>
         </div>
       </section>
+
       <section id="My Collection"   class="content hidden"><img src="images/My Collection.png"  class="full-image" /></section>
       <section id="AI Assistant"    class="content hidden"><img src="images/AI Assistant.png"   class="full-image" /></section>
       <section id="Community Plaza" class="content hidden"><img src="images/Community Plaza.png" class="full-image" /></section>
