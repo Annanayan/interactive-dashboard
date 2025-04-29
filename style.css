@@ -113,20 +113,19 @@ body {
     transition: transform 0.3s ease; /* 动画平滑过渡 */
 }
 
-.logo:hover {
-    transform: scale(1.05); /* 悬停时放大一点 */
-}
-
 .logo-image {
     width: 60px;
     height: 60px;
     margin-right: 10px;
     border-radius: 8px; /* 图片稍微圆角，可选 */
 }
-/* 地球图标悬停时旋转 */
-.logo-image:hover {
-    transform: rotate(360deg);
+
+.logo:hover .logo-image {
+    transform: rotate(360deg) scale(1.1); /* 同时旋转+放大 */
+    transition: transform 0.6s ease;
 }
+
+
 .logo-text {
     font-size: 22px;
     font-weight: bold;
