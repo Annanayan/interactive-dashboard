@@ -197,7 +197,7 @@ body.night-mode {
   background-color: #4055a5; /* 更温和的夜间蓝色 */
 }
 .container {
-  background-color: #475BA5; /* 与白天保持一致，让内容不发黑 */
+  background-color:#fff; /* 默认白色底，避免覆盖主内容和侧栏背景 */
 }
 .main-content {
   background-color: #475BA5;
