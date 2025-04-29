@@ -95,7 +95,7 @@ body{
 
 .book-item {
   width: 100%;
-  max-width: 160px;              /* 限定最大宽度以适应 4 本书 */
+  max-width: 140px;              /* 限定最大宽度以适应 4 本书 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,7 +107,7 @@ body{
 
 .book-image {
   width: 100%;
-  height: 220px;                 /* 稍微减小高度 */
+  height: 200px;                 /* 稍微减小高度 */
   object-fit: cover;
   border-radius: 10px;
 }
