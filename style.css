@@ -49,9 +49,35 @@ body{
 .header-profile span{color:#fff;font-weight:bold}
 
 /* ---------- 侧栏按钮 ---------- */
-.logo{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.logo-image{width:60px;height:60px}
-.logo-text{font-size:22px;font-weight:bold}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+/* 地球图标：悬停旋转 + 发光（不缩放） */
+.logo-image {
+  width: 60px;
+  height: 60px;
+  transition: transform 0.6s ease, box-shadow 0.4s ease;
+}
+.logo-image:hover {
+  transform: rotate(360deg);
+  box-shadow: 0 0 12px 4px #00ffff;
+}
+
+/* 产品文字：悬停放大 */
+.logo-text {
+  font-size: 22px;
+  font-weight: bold;
+  color: white;
+  transition: transform 0.3s ease;
+}
+.logo-text:hover {
+  transform: scale(1.1);
+}
 
 .nav-btn{
   width:80%;padding:10px;margin:8px 0;
