@@ -54,7 +54,7 @@ body {
 }
 
 /* 为被选中按钮设置样式 */
-.nav-btn.active， 
+.nav-btn.active, 
 .nav-btn.active:hover {
     background-color: #475BA5; /* 直接写主屏幕颜色，100%不透明 */
     color: white; /* 文字白色 */
@@ -110,7 +110,6 @@ body {
     justify-content: center;
     padding: 20px 10px;
     cursor: pointer; /* 鼠标悬停变小手 */
-    transition: transform 0.3s ease; /* 动画平滑过渡 */
 }
 
 
