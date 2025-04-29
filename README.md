@@ -1,2 +1,2 @@
-# interactive-dashboard
+# Math Village
 ixd
