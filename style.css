@@ -97,3 +97,40 @@ body{
   gap:26px;width:100%;
 }
 .book-item{display:flex;
+
+/* ========== 补丁-1：统一白色文字 ========== */
+.book-title,
+.header-profile span,
+.external-link a,
+.external-link a:visited{
+  color:#fff !important;
+}
+.external-link a:hover{opacity:.8}
+
+/* ========== 补丁-2：书名紧跟封面 ========== */
+.book-item{
+  width:160px;                 /* 与 grid 最小列宽一致，防止文字换行挤到右侧 */
+}
+.book-image{display:block}      /* 让 img 独占一行 */
+.book-title{margin-top:8px}
+
+/* ========== 补丁-3：顶栏三段式 ========== */
+.header-bar{
+  display:flex;
+  align-items:center;
+  background:#475BA5;
+  padding:0 18px;
+  position:relative;
+}
+/* 搜索框 - 左侧 */
+.header-bar input{margin-right:20px}
+/* 头像+名字 - 中央绝对居中 */
+.header-profile{
+  position:absolute;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:6px;
+}
+/* 右侧三个图标容器（第一个图标左侧自动占位） */
+.header-bar i:first-of-type{margin-left:auto}
+
+/* ========== 补丁-4：禁止横向滚动 ========== */
+.content{overflow-x:hidden}
