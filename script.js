@@ -23,3 +23,14 @@ buttons.forEach(btn=>{
 function toggleTheme() {
   document.body.classList.toggle("night-mode");
 }
+const themes = ['theme-night', 'theme-fantasy', 'theme-dark'];
+let currentThemeIndex = 0;
+
+function toggleTheme() {
+  // 移除所有主题
+  themes.forEach(t => document.body.classList.remove(t));
+
+  // 应用下一个主题
+  currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+  document.body.classList.add(themes[currentThemeIndex]);
+}
