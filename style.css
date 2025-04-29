@@ -14,6 +14,7 @@ body {
     display: flex;
     width: 80%;
     height: 80%;
+    max-width: 1200px; /* 防止太宽失控 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     overflow: hidden;
@@ -21,8 +22,8 @@ body {
 
 /* 左侧导航栏样式 */
 .sidebar {
-    width: 20%;
-    background-color: rgba(71, 91, 165, 0.9);;
+    width: 260px;
+    background-color: rgba(71, 91, 165, 0.9);
     color: white;
     display: flex;
     flex-direction: column;
