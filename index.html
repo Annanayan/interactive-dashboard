@@ -237,5 +237,26 @@
         document.getElementById("MainPage").classList.remove("hidden");
     });
 </script>
+    <script>
+  const buttons = document.querySelectorAll(".nav-btn");
+  const contents = document.querySelectorAll(".content");
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      const targetId = button.getAttribute("data-content");
+
+      // 隐藏所有内容
+      contents.forEach(content => content.classList.add("hidden"));
+
+      // 移除所有按钮高亮状态
+      buttons.forEach(btn => btn.classList.remove("active"));
+
+      // 显示目标内容 + 按钮高亮
+      document.getElementById(targetId).classList.remove("hidden");
+      button.classList.add("active");
+    });
+  });
+</script>
+
 </body>
 </html>
