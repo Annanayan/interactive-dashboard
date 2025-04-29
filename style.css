@@ -82,15 +82,46 @@ body{
 }
 
 /* Math Stories 网格 */
+/* === 书架排版修正（Math Stories 专用） =============================== */
+
+/* 1. 网格列宽增大 – 保证每列能完整容纳 图片 + 书名 */
 .book-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:26px;width:100%;
+  grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); /* 220px 刚好放下封面与书名 */
+  gap: 32px;                  /* 行列间距更舒适 */
+  padding: 30px;
 }
-.book-item{display:flex;flex-direction:column;align-items:center;transition:transform .3s}
+
+/* 2. 书项垂直布局并占整列宽度 */
+.book-item{
+  width:100%;                 /* 让列宽完全由 .book-grid 控制 */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  transition:transform .3s;
+}
 .book-item:hover{transform:scale(1.06)}
-.book-image{width:100%;border-radius:10px}
-.book-title{margin-top:8px;color:#fff;font-weight:bold;text-align:center;font-size:15px}
+
+/* 3. 封面尺寸 – 固定高宽比，防跳行 */
+.book-image{
+  width:100%;
+  height:260px;               /* 统一高度，行对齐 */
+  object-fit:cover;
+  border-radius:12px;
+}
+
+/* 4. 标题放在封面正下，白色，换行省略 */
+.book-title{
+  margin-top:10px;
+  font-size:16px;
+  font-weight:bold;
+  color:#fff;
+  text-align:center;
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;     /* 标题过长用省略号 */
+}
+
 
 /* 外部 link 区域 */
 .external-link{width:100%;display:flex;justify-content:center;align-items:center}
