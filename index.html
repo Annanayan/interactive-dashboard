@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>交互界面</title>
+    <title>Math Village</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/787740fea7.js" crossorigin="anonymous"></script>
 </head>
@@ -11,22 +11,28 @@
     <div class="container">
         <!-- 左侧导航栏 -->
         <div class="sidebar">
-            <button class="nav-btn" data-content="map"><i class="fas fa-map-marker-alt"></i> map</button>
-            <button class="nav-btn" data-content="friends"><i class="fas fa-users"></i> friends</button>
-            <button class="nav-btn" data-content="competition"><i class="fas fa-trophy"></i> competition</button>
-            <button class="nav-btn" data-content="music"><i class="fas fa-music"></i> music</button>
-            <button class="nav-btn" data-content="settings"><i class="fas fa-cog"></i> settings</button>
-            <button class="nav-btn" data-content="other"><i class="fas fa-ellipsis-h"></i> other</button>
+            <div class="logo">
+                <img src="images/logo.png" alt="Math Village Logo" class="logo-image">
+                <span class="logo-text">Math Village</span>
+            </div>
+            
+            <button class="nav-btn" data-content="Daily Review"><i class="fas fa-brain"></i> Daily Review</button>
+            <button class="nav-btn" data-content="Daily Practice"><i class="fas fa-medal"></i> Daily Practice</button>
+            <button class="nav-btn" data-content="Math Stories"><i class="fas fa-book-open"></i> Math Stories</button>
+            <button class="nav-btn" data-content="My Collection"><i class="fas fa-star"></i> My Collection</button>
+            <button class="nav-btn" data-content="AI Assistant"><i class="fas fa-robot"></i> AI Assistant</button>
+            <button class="nav-btn" data-content="Community Plaza"><i class="fas fa-users"></i> Community Plaza</button>
         </div>
+
 
         <!-- 主显示区域 -->
         <div class="main-content">
-        <div id="map" class="content hidden"><img src="images/map.jpg" alt="Map" class="content-image"></div>
-        <div id="friends" class="content hidden"><img src="images/friends.jpg" alt="Friends" class="content-image"></div>
-        <div id="competition" class="content hidden"><img src="images/competition.jpg" alt="Competition" class="content-image"></div>
-        <div id="music" class="content hidden"><img src="images/music.jpg" alt="Music" class="content-image"></div>
-        <div id="settings" class="content hidden"><img src="images/settings.jpg" alt="Settings" class="content-image"></div>
-        <div id="other" class="content hidden"><img src="images/more.jpg" alt="More" class="content-image"></div>
+        <div id="Daily Review" class="content hidden"><img src="images/map.jpg" alt="Map" class="content-image"></div>
+        <div id="Daily Practice" class="content hidden"><img src="images/friends.jpg" alt="Friends" class="content-image"></div>
+        <div id="Math Stories" class="content hidden"><img src="images/competition.jpg" alt="Competition" class="content-image"></div>
+        <div id="My Collection" class="content hidden"><img src="images/music.jpg" alt="Music" class="content-image"></div>
+        <div id="AI Assistant" class="content hidden"><img src="images/settings.jpg" alt="Settings" class="content-image"></div>
+        <div id="Communication Plaza" class="content hidden"><img src="images/more.jpg" alt="More" class="content-image"></div>
 
         </div>
     </div>
