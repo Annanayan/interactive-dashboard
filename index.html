@@ -15,6 +15,7 @@
       <img src="images/logo.png" class="logo-image" />
       <span class="logo-text">Math Village</span>
     </div>
+    <button class="nav-btn" data-content="MainPage"><i class="fas fa-home"></i> Home</button>
     <button class="nav-btn" data-content="Daily Review"><i class="fas fa-brain"></i> Daily Review</button>
     <button class="nav-btn" data-content="Daily Practice"><i class="fas fa-medal"></i> Daily Practice</button>
     <button class="nav-btn" data-content="Math Stories"><i class="fas fa-book-open"></i> Math Stories</button>
@@ -24,7 +25,7 @@
   </div>
 
   <!-- Main Content -->
-  <div class="main-content">
+  <div class="main-area">
     <!-- Topbar -->
     <div class="header-bar">
       <input type="text" placeholder="Search..." />
@@ -38,50 +39,50 @@
     </div>
 
     <!-- Pages -->
-    <div id="MainPage" class="content active">
-      <img src="images/Main page.png" class="full-image" />
-    </div>
+    <div class="main-content">
+      <div id="MainPage" class="content active">
+        <img src="images/Main page.png" class="full-image" />
+      </div>
 
-    <div id="Daily Review" class="content hidden">
-      <img src="images/Daily Review.png" class="full-image" />
-    </div>
+      <div id="Daily Review" class="content hidden">
+        <img src="images/Daily Review.png" class="full-image" />
+      </div>
 
-    <div id="Daily Practice" class="content hidden">
-      <div class="external-link">
-        <a href="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754" target="_blank">
-          Click here to start your Daily Practice!
-        </a>
+      <div id="Daily Practice" class="content hidden">
+        <div class="external-link">
+          <a href="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754" target="_blank">
+            Click here to start your Daily Practice!
+          </a>
+        </div>
+      </div>
+
+      <div id="Math Stories" class="content hidden">
+        <div class="book-grid">
+          <div class="book-item"><img src="images/Infinity and Me.png" class="book-image" /><div class="book-title">Infinity and Me</div></div>
+          <div class="book-item"><img src="images/Zero the Hero.png" class="book-image" /><div class="book-title">Zero the Hero</div></div>
+          <div class="book-item"><img src="images/Sir Cumference.png" class="book-image" /><div class="book-title">Sir Cumference</div></div>
+          <div class="book-item"><img src="images/Draw Plus Math....png" class="book-image" /><div class="book-title">Draw Plus Math...</div></div>
+          <div class="book-item"><img src="images/Pythagoras and ....png" class="book-image" /><div class="book-title">Pythagoras and ...</div></div>
+          <div class="book-item"><img src="images/The Best of Times.png" class="book-image" /><div class="book-title">The Best of Times</div></div>
+          <div class="book-item"><img src="images/What is Your An....png" class="book-image" /><div class="book-title">What is Your An...</div></div>
+          <div class="book-item"><img src="images/Sir Cumference (2).png" class="book-image" /><div class="book-title">Sir Cumference (2)</div></div>
+        </div>
+      </div>
+
+      <div id="My Collection" class="content hidden">
+        <img src="images/My Collection.png" class="full-image" />
+      </div>
+
+      <div id="AI Assistant" class="content hidden">
+        <img src="images/AI Assistant.png" class="full-image" />
+      </div>
+
+      <div id="Community Plaza" class="content hidden">
+        <img src="images/Community Plaza.png" class="full-image" />
       </div>
     </div>
-
-    <div id="Math Stories" class="content hidden">
-      <div class="book-grid">
-        <div class="book-item"><img src="images/Infinity and Me.png" class="book-image" /><div class="book-title">Infinity and Me</div></div>
-        <div class="book-item"><img src="images/Zero the Hero.png" class="book-image" /><div class="book-title">Zero the Hero</div></div>
-        <div class="book-item"><img src="images/Sir Cumference.png" class="book-image" /><div class="book-title">Sir Cumference</div></div>
-        <div class="book-item"><img src="images/Draw Plus Math....png" class="book-image" /><div class="book-title">Draw Plus Math...</div></div>
-        <div class="book-item"><img src="images/Pythagoras and ....png" class="book-image" /><div class="book-title">Pythagoras and ...</div></div>
-        <div class="book-item"><img src="images/The Best of Times.png" class="book-image" /><div class="book-title">The Best of Times</div></div>
-        <div class="book-item"><img src="images/What is Your An....png" class="book-image" /><div class="book-title">What is Your An...</div></div>
-        <div class="book-item"><img src="images/Sir Cumference (2).png" class="book-image" /><div class="book-title">Sir Cumference (2)</div></div>
-      </div>
-    </div>
-
-    <div id="My Collection" class="content hidden">
-      <img src="images/My Collection.png" class="full-image" />
-    </div>
-
-    <div id="AI Assistant" class="content hidden">
-      <img src="images/AI Assistant.png" class="full-image" />
-    </div>
-
-    <div id="Community Plaza" class="content hidden">
-      <img src="images/Community Plaza.png" class="full-image" />
-    </div>
-
-  </div> <!-- main-content结束 -->
-</div> <!-- container结束 -->
-
+  </div>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
