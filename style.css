@@ -12,9 +12,9 @@ body {
 /* 容器布局 */
 .container {
     display: flex;
-    width: 100%;
+    width: 90%;
     height: 90%;
-    max-width: 1600px; /* 防止太宽失控 */
+    max-width: 1500px; /* 防止太宽失控 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     overflow: hidden;
@@ -69,8 +69,8 @@ body {
 
 /* 主显示区域样式 */
 .main-content {
-    flex: 1; /* 自动占满剩余空间 */
-    background-color:#475BA5; /* 主屏幕蓝紫色，100% */
+    width: 85%;
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -131,6 +131,6 @@ body {
     color: white; /* 和你的侧边栏颜色保持一致 */
     transition: transform 0.3s ease; /* 加平滑动画 */
 }
-.logo-text:hover {
-    transform: scale(1.1); /* 悬停时放大1.1倍 */
+.logo:hover {
+    transform: scale(1.05); /* 悬停时放大一点 */
 }
