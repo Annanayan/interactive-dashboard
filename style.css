@@ -56,7 +56,7 @@ body {
 /* 为被选中按钮设置样式 */
 .nav-btn.active, 
 .nav-btn.active:hover {
-    background-color: #475BA5; /* 直接写主屏幕颜色，100%不透明 */
+    background-color: rgba(71, 91, 165, 0.1); /* 浅蓝紫悬停提示 */
     color: white; /* 文字白色 */
     box-shadow: none;
     font-weight: bold; /* 文字加粗 */
@@ -129,4 +129,8 @@ body {
     font-size: 22px;
     font-weight: bold;
     color: white; /* 和你的侧边栏颜色保持一致 */
+    transition: transform 0.3s ease; /* 加平滑动画 */
+}
+.logo-text:hover {
+    transform: scale(1.1); /* 悬停时放大1.1倍 */
 }
