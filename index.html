@@ -7,117 +7,235 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/787740fea7.js" crossorigin="anonymous"></script>
     <style>
-        .header-bar {
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
-            padding: 10px 20px;
-            background-color: #475BA5;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            width: 90%;
+            height: 90%;
+            max-width: 1400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+        }
+        .sidebar {
+            width: 260px;
+            background-color: rgba(71, 91, 165, 0.9);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .nav-btn {
+            width: 80%;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .nav-btn.active {
+            background-color: #3a4f99;
+            font-weight: bold;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+        }
+        .logo-image {
+            width: 60px;
+            height: 60px;
+            margin-right: 12px;
+        }
+        .logo-text {
+            font-size: 22px;
+            font-weight: bold;
             color: white;
         }
+        .main-content {
+            flex: 1;
+            background-color: #475BA5;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .header-bar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 20px;
+            gap: 20px;
+            color: white;
+            background-color: #475BA5;
+        }
         .header-bar input {
-            padding: 6px;
-            border-radius: 6px;
+            padding: 6px 10px;
+            border-radius: 5px;
             border: none;
-            margin-right: 20px;
         }
         .header-bar i {
-            margin: 0 10px;
-            font-size: 18px;
+            color: white;
             cursor: pointer;
+            font-size: 18px;
         }
         .header-profile {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: bold;
         }
         .header-profile img {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
         }
-        .content-image-large {
-            max-width: 100%;
-            max-height: 90%;
+        .content {
+            flex: 1;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .content.active {
+            display: flex;
+        }
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            width: 100%;
+        }
+        .book-item {
+            text-align: center;
+        }
+        .book-image {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
             border-radius: 10px;
+        }
+        .book-title {
+            margin-top: 10px;
+            font-weight: bold;
+            color: white;
+        }
+        .external-link a {
+            color: white;
+            font-size: 18px;
+            text-decoration: underline;
+        }
+        .full-image {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 左侧导航栏 -->
-        <div class="sidebar">
-            <div class="logo">
-                <img src="images/logo.png" alt="Math Village Logo" class="logo-image">
-                <span class="logo-text">Math Village</span>
-            </div>
-            <button class="nav-btn" data-content="Daily Review"><i class="fas fa-brain"></i> Daily Review</button>
-            <button class="nav-btn" data-content="Daily Practice"><i class="fas fa-medal"></i> Daily Practice</button>
-            <button class="nav-btn" data-content="Math Stories"><i class="fas fa-book-open"></i> Math Stories</button>
-            <button class="nav-btn" data-content="My Collection"><i class="fas fa-star"></i> My Collection</button>
-            <button class="nav-btn" data-content="AI Assistant"><i class="fas fa-robot"></i> AI Assistant</button>
-            <button class="nav-btn" data-content="Community Plaza"><i class="fas fa-users"></i> Community Plaza</button>
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="images/logo.png" class="logo-image" />
+            <span class="logo-text">Math Village</span>
         </div>
-
-        <!-- 主显示区域 -->
-        <div class="main-content">
-            <!-- 顶部栏 -->
-            <div class="header-bar">
-                <input type="text" placeholder="Search...">
-                <i class="fas fa-bell"></i>
-                <i class="fas fa-cog"></i>
-                <i class="fas fa-palette"></i>
-                <div class="header-profile">
-                    <img src="images/Anna.png" alt="Profile">
-                    Anna
-                </div>
-            </div>
-
-            <!-- 默认首页 -->
-            <div id="MainPage" class="content">
-                <img src="images/Main page.png" alt="Main Page" class="content-image-large">
-            </div>
-
-            <!-- 其他功能页 -->
-            <div id="Daily Review" class="content hidden">
-                <img src="images/Daily Review.png" alt="Daily Review" class="content-image-large">
-            </div>
-            <div id="Daily Practice" class="content hidden">
-                <div class="external-link">
-                    <a href="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754" target="_blank">
-                        Click here to start your Daily Practice!
-                    </a>
-                </div>
-            </div>
-            <div id="Math Stories" class="content hidden">
-                <div class="book-grid">
-                    <div class="book-item">
-                        <img src="images/Infinity and Me.png" alt="Infinity and Me" class="book-image">
-                        <div class="book-title">Infinity and Me</div>
-                    </div>
-                    <!-- 其他图书项照旧插入即可 -->
-                </div>
-            </div>
-            <div id="My Collection" class="content hidden">
-                <img src="images/My Collection.png" alt="My Collection" class="content-image-large">
-            </div>
-            <div id="AI Assistant" class="content hidden">
-                <img src="images/AI Assistant.png" alt="AI Assistant" class="content-image-large">
-            </div>
-            <div id="Community Plaza" class="content hidden">
-                <img src="images/Community Plaza.png" alt="Community Plaza" class="content-image-large">
-            </div>
-        </div>
+        <button class="nav-btn" data-content="Daily Review"><i class="fas fa-brain"></i> Daily Review</button>
+        <button class="nav-btn" data-content="Daily Practice"><i class="fas fa-medal"></i> Daily Practice</button>
+        <button class="nav-btn" data-content="Math Stories"><i class="fas fa-book-open"></i> Math Stories</button>
+        <button class="nav-btn" data-content="My Collection"><i class="fas fa-star"></i> My Collection</button>
+        <button class="nav-btn" data-content="AI Assistant"><i class="fas fa-robot"></i> AI Assistant</button>
+        <button class="nav-btn" data-content="Community Plaza"><i class="fas fa-users"></i> Community Plaza</button>
     </div>
 
-    <script src="script.js"></script>
-    <script>
-        // 默认显示首页内容
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".content").forEach(c => c.classList.add("hidden"));
-            document.getElementById("MainPage").classList.remove("hidden");
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="header-bar">
+            <input type="text" placeholder="Search..." />
+            <i class="fas fa-bell"></i>
+            <i class="fas fa-cog"></i>
+            <i class="fas fa-palette"></i>
+            <div class="header-profile">
+                <img src="images/Anna.png" class="profile-icon" />
+                <span>Anna</span>
+            </div>
+        </div>
+
+        <!-- Content Areas -->
+        <div id="MainPage" class="content active"><img src="images/Main page.png" class="full-image" /></div>
+
+        <div id="Daily Review" class="content hidden"><img src="images/Daily Review.png" class="full-image" /></div>
+
+        <div id="Daily Practice" class="content hidden">
+            <div class="external-link">
+                <a href="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754" target="_blank">
+                    Click here to start your Daily Practice!
+                </a>
+            </div>
+        </div>
+
+        <div id="Math Stories" class="content hidden">
+            <div class="book-grid">
+                <div class="book-item"><img src="images/Infinity and Me.png" class="book-image" /><div class="book-title">Infinity and Me</div></div>
+                <div class="book-item"><img src="images/Zero the Hero.png" class="book-image" /><div class="book-title">Zero the Hero</div></div>
+                <div class="book-item"><img src="images/Sir Cumference.png" class="book-image" /><div class="book-title">Sir Cumference</div></div>
+                <div class="book-item"><img src="images/Draw Plus Math....png" class="book-image" /><div class="book-title">Draw Plus Math...</div></div>
+                <div class="book-item"><img src="images/Pythagoras and ....png" class="book-image" /><div class="book-title">Pythagoras and ...</div></div>
+                <div class="book-item"><img src="images/The Best of Times.png" class="book-image" /><div class="book-title">The Best of Times</div></div>
+                <div class="book-item"><img src="images/What is Your An....png" class="book-image" /><div class="book-title">What is Your An...</div></div>
+                <div class="book-item"><img src="images/Sir Cumference (2).png" class="book-image" /><div class="book-title">Sir Cumference (2)</div></div>
+            </div>
+        </div>
+
+        <div id="My Collection" class="content hidden"><img src="images/My Collection.png" class="full-image" /></div>
+        <div id="AI Assistant" class="content hidden"><img src="images/AI Assistant.png" class="full-image" /></div>
+        <div id="Community Plaza" class="content hidden"><img src="images/Community Plaza.png" class="full-image" /></div>
+    </div>
+</div>
+
+<script>
+    const buttons = document.querySelectorAll(".nav-btn");
+    const contents = document.querySelectorAll(".content");
+
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            buttons.forEach(b => b.classList.remove("active"));
+            contents.forEach(c => c.classList.add("hidden"));
+            btn.classList.add("active");
+            const id = btn.getAttribute("data-content");
+            document.getElementById(id).classList.remove("hidden");
         });
-    </script>
+    });
+
+    // 默认显示首页 MainPage
+    document.addEventListener("DOMContentLoaded", function() {
+        contents.forEach(c => c.classList.add("hidden"));
+        document.getElementById("MainPage").classList.remove("hidden");
+    });
+</script>
 </body>
 </html>
