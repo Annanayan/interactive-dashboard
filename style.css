@@ -55,7 +55,7 @@ body {
 
 /* 主显示区域样式 */
 .main-content {
-    width: 80%;
+    width: flex: 1; /* 自动占满剩余空间 */
     background-color: rgba(71, 91, 165, 1); /* 蓝色，透明度100% */
     display: flex;
     justify-content: center;
@@ -86,8 +86,13 @@ body {
 .nav-btn.active {
     background-color: rgba(71, 91, 165, 1); /* 和主界面一样的颜色 */
     color: white; /* 文字白色 */
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* 增加按钮的外部光晕效果 */
+    box-shadow: none;
     font-weight: bold; /* 文字加粗 */
+}
+
+/* 悬停状态（可选加上，提升体验感） */
+.nav-btn:hover {
+    background-color: rgba(71, 91, 165, 0.1); /* 浅蓝紫悬停提示 */
 }
 
 
