@@ -6,154 +6,6 @@
   <title>Math Village</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/787740fea7.js" crossorigin="anonymous"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      display: flex;
-      width: 90%;
-      height: 90%;
-      max-width: 1400px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-      overflow: hidden;
-      background-color: white;
-    }
-    .sidebar {
-      width: 260px;
-      background-color: rgba(71, 91, 165, 0.9);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 0;
-    }
-    .nav-btn {
-      width: 80%;
-      margin: 10px 0;
-      padding: 10px;
-      background-color: transparent;
-      color: white;
-      border: none;
-      outline: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.3s ease;
-    }
-    .nav-btn:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-    .nav-btn.active {
-      background-color: #3a4f99;
-      font-weight: bold;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px 10px;
-    }
-    .logo-image {
-      width: 60px;
-      height: 60px;
-      margin-right: 12px;
-    }
-    .logo-text {
-      font-size: 22px;
-      font-weight: bold;
-      color: white;
-    }
-    .main-content {
-      flex: 1;
-      background-color: #475BA5;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    .header-bar {
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 0 20px;
-      gap: 20px;
-      color: white;
-      background-color: #475BA5;
-    }
-    .header-bar input {
-      padding: 6px 10px;
-      border-radius: 5px;
-      border: none;
-    }
-    .header-bar i {
-      color: white;
-      cursor: pointer;
-      font-size: 18px;
-    }
-    .header-profile {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .header-profile img {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-    }
-    .content {
-      flex: 1;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    .content.active {
-      display: flex;
-    }
-    .book-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 30px;
-      width: 100%;
-    }
-    .book-item {
-      text-align: center;
-    }
-    .book-image {
-      width: 100%;
-      max-width: 180px;
-      height: auto;
-      border-radius: 10px;
-    }
-    .book-title {
-      margin-top: 10px;
-      font-weight: bold;
-      color: white;
-    }
-    .external-link a {
-      color: white;
-      font-size: 18px;
-      text-decoration: underline;
-    }
-    .full-image {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 12px;
-    }
-  </style>
 </head>
 <body>
 <div class="container">
@@ -185,7 +37,7 @@
       </div>
     </div>
 
-    <!-- Content Areas -->
+    <!-- Pages -->
     <div id="MainPage" class="content active">
       <img src="images/Main page.png" class="full-image" />
     </div>
@@ -226,31 +78,10 @@
     <div id="Community Plaza" class="content hidden">
       <img src="images/Community Plaza.png" class="full-image" />
     </div>
-  </div>
-</div>
 
-<!-- JS切换逻辑 -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const buttons = document.querySelectorAll(".nav-btn");
-  const contents = document.querySelectorAll(".content");
+  </div> <!-- main-content结束 -->
+</div> <!-- container结束 -->
 
-  // 默认：只显示 MainPage
-  contents.forEach(c => c.classList.add("hidden"));
-  document.getElementById("MainPage").classList.remove("hidden");
-
-  // 点击按钮切换内容
-  buttons.forEach(button => {
-    button.addEventListener("click", () => {
-      buttons.forEach(b => b.classList.remove("active"));
-      contents.forEach(c => c.classList.add("hidden"));
-      button.classList.add("active");
-      const id = button.getAttribute("data-content");
-      document.getElementById(id).classList.remove("hidden");
-    });
-  });
-});
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
