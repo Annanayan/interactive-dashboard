@@ -21,13 +21,13 @@ body {
 
 /* 左侧导航栏样式 */
 .sidebar {
-    width: 15%;
-    background-color: #222;
+    width: 20%;
+    background-color: rgba(71, 91, 165, 0.9);;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px 0;
+    padding: 20px 0;
 }
 
 .nav-btn {
@@ -54,8 +54,8 @@ body {
 
 /* 主显示区域样式 */
 .main-content {
-    width: 85%;
-    background-color: white;
+    width: 80%;
+    background-color: rgba(71, 91, 165, 1); /* 蓝色，透明度100% */
     display: flex;
     justify-content: center;
     align-items: center;
