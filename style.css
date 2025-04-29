@@ -184,19 +184,20 @@ body{
 }
 
 body.night-mode {
-  background-color: #1e1e3f;
+  background-color: #4055a5; /* 更温和的夜间蓝色 */
 }
 .container {
-  background-color: #2a2a5a;
+  background-color: #475BA5; /* 与白天保持一致，让内容不发黑 */
 }
 .main-content {
-  background-color: #1e1e3f;
+  background-color: #475BA5;
 }
 .header-bar {
-  background-color: #1e1e3f;
+  background-color: #475BA5;
 }
 .sidebar {
-  background-color: rgba(50, 70, 150, 0.9);
+  background-color: rgba(71, 91, 165, 0.95); /* 原色略微提亮 */
 }
+
 
 
