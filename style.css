@@ -38,6 +38,7 @@ body {
     background-color:  transparent; /* 默认没有背景 */
     color: white;
     border: none;
+    outline: none; /* 无焦点轮廓 */
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
@@ -52,11 +53,23 @@ body {
     font-size: 18px; /* 设置图标大小 */
 }
 
+/* 为被选中按钮设置样式 */
+.nav-btn.active {
+    background-color: #475BA5; /* 直接写主屏幕颜色，100%不透明 */
+    color: white; /* 文字白色 */
+    box-shadow: none;
+    font-weight: bold; /* 文字加粗 */
+}
+
+/* 悬停状态（可选加上，提升体验感） */
+.nav-btn:hover {
+    background-color: rgba(71, 91, 165, 0.1); /* 浅蓝紫悬停提示 */
+}
 
 /* 主显示区域样式 */
 .main-content {
-    width: flex: 1; /* 自动占满剩余空间 */
-    background-color: rgba(71, 91, 165, 1); /* 蓝色，透明度100% */
+    flex: 1; /* 自动占满剩余空间 */
+    background-color:#475BA5; /* 主屏幕蓝紫色，100% */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -82,18 +95,6 @@ body {
     border-radius: 10px;
 }
 
-/* 为被选中按钮设置样式 */
-.nav-btn.active {
-    background-color: rgba(71, 91, 165, 1); /* 和主界面一样的颜色 */
-    color: white; /* 文字白色 */
-    box-shadow: none;
-    font-weight: bold; /* 文字加粗 */
-}
-
-/* 悬停状态（可选加上，提升体验感） */
-.nav-btn:hover {
-    background-color: rgba(71, 91, 165, 0.1); /* 浅蓝紫悬停提示 */
-}
 
 
 /* 隐藏非激活内容 */
