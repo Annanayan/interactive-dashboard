@@ -244,5 +244,104 @@ body.theme-dark .sidebar {
   background-color: rgba(40, 40, 40, 0.95);
 }
 
+/* =========================
+   Math Tutor 聊天 UI
+   ========================= */
+#mv-chat {
+  max-width: 900px;
+  width: 100%;
+  margin: 24px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #111;
+}
+
+#mv-chat h2 {
+  color: #fff; /* 与主蓝底协调 */
+  margin: 0 0 8px 0;
+}
+
+#mv-messages {
+  min-height: 240px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.mv-msg {
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 80%;
+  line-height: 1.5;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.mv-user {
+  align-self: flex-end;
+  background: #eef6ff;
+}
+
+.mv-assistant {
+  align-self: flex-start;
+  background: #f7f7f7;
+}
+
+#mv-form {
+  display: flex;
+  gap: 8px;
+}
+
+#mv-input {
+  flex: 1;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+
+#mv-form button {
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: #3a4f99;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+#mv-form button:hover { filter: brightness(1.1); }
+
+.hint {
+  color: #e8ecff;
+  font-size: 12px;
+}
+
+/* 主题下的适配（与现有 theme-* 保持一致） */
+body.theme-night #mv-messages { background:#f6f7ff; }
+body.theme-night .mv-user     { background:#e8f1ff; }
+body.theme-night .mv-assistant{ background:#edf0ff; }
+
+body.theme-fantasy #mv-messages { background:#fff8fd; }
+body.theme-fantasy .mv-user     { background:#ffe9f7; }
+body.theme-fantasy .mv-assistant{ background:#fff2fb; }
+
+body.theme-dark #mv-chat h2     { color:#f5f5f5; }
+body.theme-dark #mv-messages    { background:#2a2a2a; border-color:#3a3a3a; color:#f5f5f5; }
+body.theme-dark .mv-user        { background:#333b55; color:#f5f5f5; }
+body.theme-dark .mv-assistant   { background:#3a3a3a; color:#f5f5f5; }
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .mv-msg { max-width: 100%; }
+  #mv-input { min-height: 60px; }
+}
+
 
 
