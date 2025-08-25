@@ -68,6 +68,22 @@
 
       <section id="My Collection"   class="content hidden"><img src="images/My Collection.png"  class="full-image" /></section>
       <section id="AI Assistant"    class="content hidden"><img src="images/AI Assistant.png"   class="full-image" /></section>
+      <section id="AI Assistant" class="content hidden">
+        <div id="mv-chat">
+            <h2>Math Tutor</h2>
+            <div id="mv-messages" aria-live="polite"></div>
+
+            <form id="mv-form">
+              <textarea id="mv-input" rows="3" placeholder="Ask a math question..."></textarea>
+              <button type="submit">Send</button>
+            </form>
+            <small class="hint">Tip: 你可以贴图像/公式，用 $$...$$ 写 LaTeX。</small>
+          </div>
+
+          <!-- LaTeX 渲染（可选） -->
+          <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        </section>
+
       <section id="Community Plaza" class="content hidden"><img src="images/Community Plaza.png" class="full-image" /></section>
     </main>
   </div>
@@ -79,3 +95,4 @@
 </div>
 
 </html>
+
