@@ -382,15 +382,16 @@ body.theme-dark .mv-send       { background:#5279ff; color:#fff; }
 }
 
 /* ============  Daily Review 页面 ============ */
-section[id="Daily Review"].daily-review{
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  padding-top:56px;              /* ↓ 往下挪一点，更居中 */
-  padding-bottom:40px;
-  gap:18px;
+/* 仅当 Daily Review 被激活时应用排版，不改变 display */
+section[id="Daily Review"].content.daily-review{
+  /* 2) 居中在可视区中间 */
+  justify-content: center;       /* 垂直居中 */
+  align-items: center;           /* 水平居中 */
+  flex-direction: column;
+  gap: 18px;
+  padding: 40px 0;               /* 比较舒服的上下留白 */
 }
+
 
 /* 卡片容器（半透明+柔和阴影） */
 section[id="Daily Review"].daily-review .dr-card{
@@ -403,7 +404,7 @@ section[id="Daily Review"].daily-review .dr-card{
   backdrop-filter: blur(6px);
 }
 
-/* 标题居中，正文全部左对齐 */
+/* 标题居中，其余全部左对齐（第 3 点） */
 section[id="Daily Review"].daily-review .dr-title{
   margin:0 0 6px 0;
   text-align:center;
@@ -412,53 +413,58 @@ section[id="Daily Review"].daily-review .dr-title{
   color:#fff;
   text-shadow:0 2px 10px rgba(0,0,0,.28);
 }
-section[id="Daily Review"].daily-review .dr-lead{
-  margin:0 0 12px 0;
-  text-align:left;                     /* ← 左对齐 */
-  font-family:"Kalam", system-ui;
-  font-weight:700; letter-spacing:.2px;
-  color:#f4f7ff;
-  text-shadow:0 1px 6px rgba(0,0,0,.18);
-}
+section[id="Daily Review"].daily-review .dr-lead,
 section[id="Daily Review"].daily-review .dr-line{
-  margin:8px 0; line-height:1.7;
-  text-align:left;                     /* ← 左对齐 */
+  text-align:left;                /* ← 全部左对齐 */
   font-family:"Kalam", system-ui;
-  font-size:18px;
-  color:#ffffff;                       /* 统一白色 */
-  max-width:62ch;                      /* 舒适行长 */
+  line-height:1.7;
+  max-width:62ch;
+  margin:8px 0;
+  color:#ffffff;                  /* 4) 默认深色主题下白字 */
 }
 
-/* 按钮：#64B2D8；浅色主题自动改黑字 */
+/* 按钮（第 3 点：像按钮、有阴影） */
 section[id="Daily Review"].daily-review .dr-cta{
   appearance:none; -webkit-appearance:none;
-  display:block; margin:14px 0 0 0;
-  padding:10px 24px;
-  background:#64B2D8;
-  border:none; border-radius:10px;
+  display:block; margin:16px 0 0 0;
+  padding:12px 26px;
+  background:#64B2D8;            /* 你指定的底色 */
+  color:#fff;                     /* 深色背景 → 白字 */
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:12px;
   font-weight:800; font-size:18px; letter-spacing:.3px;
-  color:#fff;                          /* 默认深底 → 白字 */
-  box-shadow:0 10px 20px rgba(100,178,216,.35);
   cursor:pointer;
-  transition: transform .05s ease, filter .15s ease;
+  box-shadow:
+    0 12px 24px rgba(100,178,216,.35),  /* 外投影 */
+    inset 0 1px 0 rgba(255,255,255,.35),/* 顶部高光 */
+    inset 0 -2px 0 rgba(0,0,0,.12);     /* 底部暗部 */
+  transition: transform .06s ease, filter .15s ease;
 }
-section[id="Daily Review"].daily-review .dr-cta:hover{ filter:brightness(1.05) }
+section[id="Daily Review"].daily-review .dr-cta:hover{ filter:brightness(1.06) }
 section[id="Daily Review"].daily-review .dr-cta:active{ transform: translateY(1px) }
 
-/* 主题适配：浅色主题（fantasy）用黑字，深色仍白字；卡片对比度微调 */
-body.theme-fantasy section[id="Daily Review"].daily-review .dr-card{
-  background: rgba(255,255,255,.22); color:#222;
-}
-body.theme-fantasy section[id="Daily Review"].daily-review .dr-line,
-body.theme-fantasy section[id="Daily Review"].daily-review .dr-lead{ color:#111; }
-body.theme-fantasy section[id="Daily Review"].daily-review .dr-cta{ color:#111; }
 
-body.theme-dark section[id="Daily Review"].daily-review .dr-card{
-  background: rgba(31,33,52,.90); border-color:#2c2e4a;
+/* 浅色主题（fantasy）：正文改黑字、按钮字也改黑，提高对比度 */
+body.theme-fantasy section[id="Daily Review"].daily-review .dr-card{
+  background: rgba(255,255,255,.22);
 }
-body.theme-dark section[id="Daily Review"].daily-review .dr-lead,
-body.theme-dark section[id="Daily Review"].daily-review .dr-line{ color:#e6e9ff; }
-body.theme-dark section[id="Daily Review"].daily-review .dr-cta{ color:#fff; }
+body.theme-fantasy section[id="Daily Review"].daily-review .dr-lead,
+body.theme-fantasy section[id="Daily Review"].daily-review .dr-line{
+  color:#111 !important;         /* 仅浅色主题 → 黑字 */
+  text-shadow:none;
+}
+body.theme-fantasy section[id="Daily Review"].daily-review .dr-cta{
+  color:#111;                    /* 按钮字黑色（你要求） */
+}
+
+/* 深色主题：维持白字 */
+body.theme-night section[id="Daily Review"].daily-review .dr-lead,
+body.theme-night section[id="Daily Review"].daily-review .dr-line,
+body.theme-dark  section[id="Daily Review"].daily-review .dr-lead,
+body.theme-dark  section[id="Daily Review"].daily-review .dr-line{
+  color:#ffffff;
+}
+
 
 /* 移动端微调 */
 @media (max-width: 768px){
