@@ -67,22 +67,27 @@
       </section>
 
       <section id="My Collection"   class="content hidden"><img src="images/My Collection.png"  class="full-image" /></section>
-      <section id="AI Assistant"    class="content hidden"><img src="images/AI Assistant.png"   class="full-image" /></section>
-      <section id="AI Assistant" class="content hidden">
-        <div id="mv-chat">
-            <h2>Math Tutor</h2>
-            <div id="mv-messages" aria-live="polite"></div>
+      
+      <section id="AI Assistant" class="content hidden ai-assistant">
+         <!-- 顶部中心的图标 + 标题 -->
+        <div class="mv-hero">
+            <img src="images/logo.png" alt="Math Solver" class="mv-hero-logo" />
+            <h1 class="mv-hero-title">Math Solver</h1>
+        </div>
+        
+        <div id="mv-chat" class="mv-card">
+          <div id="mv-messages" class="mv-messages" aria-live="polite"></div>
 
-            <form id="mv-form">
-              <textarea id="mv-input" rows="3" placeholder="Ask a math question..."></textarea>
-              <button type="submit">Send</button>
-            </form>
-            <small class="hint">Tip: 你可以贴图像/公式，用 $$...$$ 写 LaTeX。</small>
-          </div>
+          <form id="mv-form" class="mv-composer">
+            <textarea id="mv-input" rows="2"
+              placeholder="How can I help you today? (Shift+Enter for newline)"></textarea>
+            <button type="submit" class="mv-send">Send</button>
+          </form>
+        </div>
 
-          <!-- LaTeX 渲染（可选） -->
-          <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        </section>
+        <!-- 公式渲染 -->
+        <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      </section>
 
       <section id="Community Plaza" class="content hidden"><img src="images/Community Plaza.png" class="full-image" /></section>
     </main>
@@ -95,4 +100,5 @@
 </div>
 
 </html>
+
 
