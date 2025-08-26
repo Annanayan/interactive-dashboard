@@ -416,7 +416,9 @@ section[id="Daily Review"].daily-review .dr-title{
 section[id="Daily Review"].daily-review .dr-lead,
 section[id="Daily Review"].daily-review .dr-line{
   text-align:left;                /* ← 全部左对齐 */
-  font-family:"Kalam", system-ui;
+  font-family: inherit;     /* ← 用全站默认字体（你的 body 是 Arial/Helvetica） */
+  font-style: normal;       /* ← 明确不是 italic */
+  font-weight: 400;         /* ← 常规字重 */
   line-height:1.7;
   max-width:62ch;
   margin:8px 0;
@@ -453,8 +455,9 @@ body.theme-fantasy section[id="Daily Review"].daily-review .dr-line{
   color:#111 !important;         /* 仅浅色主题 → 黑字 */
   text-shadow:none;
 }
-body.theme-fantasy section[id="Daily Review"].daily-review .dr-cta{
-  color:#111;                    /* 按钮字黑色（你要求） */
+section[id="Daily Review"].daily-review .dr-cta{
+  /* ... 原有样式保持不变 ... */
+  color:#fff !important;   /* ← 按钮文字永远白色 */
 }
 
 /* 深色主题：维持白字 */
@@ -472,6 +475,7 @@ body.theme-dark  section[id="Daily Review"].daily-review .dr-line{
   section[id="Daily Review"].daily-review .dr-title{ font-size:30px; }
   section[id="Daily Review"].daily-review .dr-line{ font-size:17px; }
 }
+
 
 
 
