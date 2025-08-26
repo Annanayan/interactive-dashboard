@@ -379,6 +379,94 @@ body.theme-dark .mv-send       { background:#5279ff; color:#fff; }
   #mv-input { min-height: 60px; }
 }
 
+/* Daily Review：让该页从上向下排版、居中 */
+section[id="Daily Review"].daily-review {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  padding-top: 28px;
+}
+
+/* 卡片容器 */
+.dr-card{
+  width: min(780px, 92%);
+  padding: 28px 32px;
+  background: rgba(255,255,255,0.10);             /* 半透明，保留蓝底氛围 */
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0,0,0,.18);
+  color: #EAF2FF;                                  /* 适配你当前的蓝紫背景 */
+  backdrop-filter: blur(6px);
+}
+
+/* 标题 + 引导语 */
+.dr-title{
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  line-height: 1.2;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0,0,0,.28);
+}
+.dr-lead{
+  margin: 0 0 12px 0;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: #f4f7ff;
+}
+
+/* 列表：更易扫读的“短句块” */
+.dr-list{
+  list-style: none;
+  padding: 0;
+  margin: 12px auto 20px;
+  max-width: 62ch;                          /* 控制行长，提升阅读舒适度 */
+}
+.dr-list li{
+  position: relative;
+  padding-left: 22px;                        /* 给自定义圆点让位 */
+  margin: 10px 0;
+  line-height: 1.7;
+}
+.dr-list li::before{
+  content: "•";
+  position: absolute;
+  left: 0; top: 0.15em;
+  color: #ffd66b;                            /* 温暖强调点 */
+  font-size: 1.2em;
+}
+.dr-k{ color: #ffd66b; font-weight: 700; }   /* 关键词高亮 */
+
+/* CTA 按钮（按你要求 #64B2D8） */
+.dr-cta{
+  display: inline-block;
+  margin: 6px auto 0;
+  padding: 10px 22px;
+  background: #64B2D8;                       /* 指定按钮色 */
+  color: #ffffff;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(100,178,216,.35);
+  cursor: pointer;
+}
+.dr-cta:hover{ filter: brightness(1.05); }
+.dr-cta:active{ transform: translateY(1px); }
+
+/* 三套主题的轻量补丁，让卡片/文字在不同主题下依然清晰 */
+body.theme-night .dr-card{ background: rgba(255,255,255,0.12); color:#EAF2FF; }
+body.theme-fantasy .dr-card{ background: rgba(255,255,255,0.22); color:#442a43; }
+body.theme-dark .dr-card{ background: rgba(31,33,52,.9); color:#e6e9ff; border-color:#2c2e4a; }
+
+/* 移动端：更紧凑的留白与字号 */
+@media (max-width: 768px){
+  .dr-card{ width: 94%; padding: 22px 18px; }
+  .dr-title{ font-size: 24px; }
+  .dr-list{ margin: 10px auto 16px; }
+}
+
 
 
 
