@@ -426,24 +426,27 @@ section[id="Daily Review"].daily-review .dr-line{
 }
 
 /* 按钮（第 3 点：像按钮、有阴影） */
+/* Daily Review 的按钮：始终蓝底 + 居中 + 白字 */
 section[id="Daily Review"].daily-review .dr-cta{
   appearance:none; -webkit-appearance:none;
-  display:block; margin:16px 0 0 0;
+  display:inline-block;                 /* 让 margin: auto 能生效 */
+  margin:16px auto 0;                   /* ← 居中（左右 auto） */
   padding:12px 26px;
-  background:#64B2D8;            /* 你指定的底色 */
-  color:#fff;                     /* 深色背景 → 白字 */
+  background:#64B2D8;
+  color:#fff !important;                /* 你说不随主题变，白字固定 */
   border:1px solid rgba(0,0,0,.08);
   border-radius:12px;
   font-weight:800; font-size:18px; letter-spacing:.3px;
   cursor:pointer;
   box-shadow:
-    0 12px 24px rgba(100,178,216,.35),  /* 外投影 */
-    inset 0 1px 0 rgba(255,255,255,.35),/* 顶部高光 */
-    inset 0 -2px 0 rgba(0,0,0,.12);     /* 底部暗部 */
+    0 12px 24px rgba(100,178,216,.35),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 0 rgba(0,0,0,.12);
   transition: transform .06s ease, filter .15s ease;
 }
 section[id="Daily Review"].daily-review .dr-cta:hover{ filter:brightness(1.06) }
 section[id="Daily Review"].daily-review .dr-cta:active{ transform: translateY(1px) }
+
 
 
 /* 浅色主题（fantasy）：正文改黑字、按钮字也改黑，提高对比度 */
@@ -476,9 +479,69 @@ body.theme-dark  section[id="Daily Review"].daily-review .dr-line{
   section[id="Daily Review"].daily-review .dr-line{ font-size:17px; }
 }
 
+/* ===== My Collection 布局 ===== */
+.collection{ flex-direction:column; align-items:center; gap:14px; }
+.collection .col-header{
+  width:min(900px,92%); display:flex; align-items:center; justify-content:space-between;
+  color:#fff;
+}
+.collection .col-actions{ display:flex; gap:10px; }
+.collection .btn{
+  padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.15); color:#fff; cursor:pointer;
+}
+.collection .btn.primary{ background:#3a4f99; border-color:#2e3f85; }
+.collection select{
+  padding:8px 10px; border-radius:8px; border:1px solid #d1d5db;
+}
 
+/* 编辑器卡片 */
+.collection .editor{
+  width:min(900px,92%); background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+  box-shadow:0 10px 24px rgba(0,0,0,.10); overflow:hidden;
+}
+.collection .editor.hidden{ display:none; }
+.collection .editor-toolbar{
+  display:flex; gap:8px; padding:10px; border-bottom:1px solid #edf0f5; background:#fafbff;
+}
+.collection .editor-toolbar .sep{ width:1px; background:#e5e7eb; margin:0 6px; }
+.collection .editor-toolbar button{
+  border:none; background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:6px 8px; cursor:pointer;
+}
+.collection .editor-title{
+  width:100%; border:none; outline:none; padding:12px 14px; font-size:18px; border-bottom:1px solid #f1f2f6;
+}
+.collection .editor-body{
+  min-height:180px; padding:14px; outline:none;
+}
+.collection .editor-body:empty:before{
+  content: attr(data-placeholder); color:#9aa3b2;
+}
+.collection .editor-footer{ display:flex; justify-content:flex-end; gap:8px; padding:10px; border-top:1px solid #edf0f5; }
 
+/* 列表卡片 */
+.collection .col-list{
+  width:min(900px,92%); display:grid; grid-template-columns:1fr; gap:12px; padding-bottom:10px;
+}
+.collection .col-item{
+  background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px;
+  display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:start;
+}
+.collection .col-item .meta{ color:#6b7280; font-size:12px; margin-top:6px; }
+.collection .col-item .actions{ display:flex; gap:8px; }
+.collection .tag{ display:inline-block; font-size:12px; padding:2px 8px; border-radius:6px; background:#eef2ff; color:#3a4f99; }
 
+/* checklist 简样式 */
+.collection .editor-body ul.checklist{ list-style:none; padding-left:0; }
+.collection .editor-body ul.checklist li{ margin:6px 0; }
+.collection .editor-body ul.checklist input[type="checkbox"]{ margin-right:8px; }
 
+/* Math Stories 收藏按钮（右上角小星标） */
+.book-item{ position:relative; }
+.collect-btn{
+  position:absolute; top:8px; right:8px; width:28px; height:28px; border:none; border-radius:50%;
+  background:rgba(0,0,0,.35); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.collect-btn:hover{ filter:brightness(1.1); }
 
 
