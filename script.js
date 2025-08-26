@@ -151,7 +151,7 @@ window.toggleTheme = toggleTheme;
 })();
 
 // =======================
-// My Collection：本地收藏/笔记
+// My Collection：预览 + 弹窗查看/编辑 + 右键菜单 + 分享 + 取消收藏
 // =======================
 (function initCollection(){
   const listEl   = document.getElementById('col-list');
@@ -162,36 +162,63 @@ window.toggleTheme = toggleTheme;
   const bodyEl   = document.getElementById('col-body');
   const saveBtn  = document.getElementById('col-save');
   const cancelBtn= document.getElementById('col-cancel');
+
+  const modalEl  = document.getElementById('col-modal');
+  const modalTitle= document.getElementById('modal-title');
+  const modalBody = document.getElementById('modal-body');
+  const modalEdit = document.getElementById('modal-edit');
+  const modalSave = document.getElementById('modal-save');
+  const modalDelete= document.getElementById('modal-delete');
+  const modalClose = document.getElementById('modal-close');
+
+  const shareSheet= document.getElementById('share-sheet');
+
+  const menuEl   = document.getElementById('col-menu');
+
   if (!listEl || !newBtn) return;
 
   const STORE_KEY = 'mv_collection_v1';
-  let editingId = null;
+  const PLAZA_KEY = 'mv_plaza_posts_v1';
+  let editingId = null;      // 新建/编辑用
+  let viewingId = null;      // 弹窗中查看的条目
 
   const load = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
   const save = (arr) => localStorage.setItem(STORE_KEY, JSON.stringify(arr));
 
+  const loadPlaza = () => JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]');
+  const savePlaza = (arr) => localStorage.setItem(PLAZA_KEY, JSON.stringify(arr));
+
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  const preview = (s, n=140) => {
+    const t = (s||'').replace(/\s+/g,' ').trim();
+    return t.length>n ? t.slice(0,n)+'…' : t;
+  };
+
+  // —— 渲染列表（只显示预览） —— //
   function render(){
     const type = filterEl?.value || 'all';
     const data = load().filter(it => type==='all' ? true : it.type===type)
                        .sort((a,b)=> b.createdAt - a.createdAt);
-    listEl.innerHTML = data.map(it => `
+
+    listEl.innerHTML = data.map(it => {
+      const text = it.type==='note' ? (it.content || '') : (it.content || '');
+      return `
       <div class="col-item" data-id="${it.id}">
-        <div>
+        <div class="main">
           <div class="title"><strong>${escapeHtml(it.title || '(Untitled)')}</strong> <span class="tag">${it.type}</span></div>
-          <div class="snippet">${it.type==='note' ? it.html : escapeHtml(it.content || '')}</div>
+          <div class="snippet">${escapeHtml(preview(text))}</div>
           <div class="meta">${new Date(it.createdAt).toLocaleString()}</div>
         </div>
         <div class="actions">
-          ${it.type==='note' ? `<button class="btn edit"><i class="fas fa-pen"></i></button>` : ''}
-          <button class="btn del"><i class="fas fa-trash"></i></button>
+          ${it.type==='note' ? `<button class="btn edit" title="Edit"><i class="fas fa-pen"></i></button>` : ''}
+          <button class="btn share" title="Share"><i class="fas fa-share"></i></button>
+          <button class="btn del"   title="Delete"><i class="fas fa-trash"></i></button>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
-  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-  // —— 新建/编辑 笔记 —— //
+  // —— 新建/编辑 笔记（编辑器卡片） —— //
   function openEditor(note){
     editorEl.classList.remove('hidden');
     editingId = note?.id || null;
@@ -222,99 +249,199 @@ window.toggleTheme = toggleTheme;
     render();
   });
 
-  // 工具栏：execCommand + 高亮 + 清单
+  // 工具栏
   document.querySelector('.editor-toolbar')?.addEventListener('click', (e)=>{
     const btn = e.target.closest('button'); if(!btn) return;
-    if (btn.dataset.cmd){
-      document.execCommand(btn.dataset.cmd, false, null);
-      bodyEl.focus(); return;
-    }
-    if (btn.hasAttribute('data-mark')){ // 高亮
+    if (btn.dataset.cmd){ document.execCommand(btn.dataset.cmd,false,null); bodyEl.focus(); return; }
+    if (btn.hasAttribute('data-mark')){
       const sel = window.getSelection();
-      if (sel && sel.rangeCount){
-        const r = sel.getRangeAt(0);
-        if (!r.collapsed){
-          const mark = document.createElement('mark');
-          r.surroundContents(mark);
-        }
+      if (sel && sel.rangeCount && !sel.getRangeAt(0).collapsed){
+        const r = sel.getRangeAt(0); const mark = document.createElement('mark'); r.surroundContents(mark);
       }
       bodyEl.focus(); return;
     }
     if (btn.id==='insert-checklist'){
-      const html = `<ul class="checklist"><li><label><input type="checkbox"> item</label></li></ul>`;
-      insertHtmlAtCaret(html, bodyEl); bodyEl.focus(); return;
+      document.execCommand('insertHTML', false, `<ul class="checklist"><li><label><input type="checkbox"> item</label></li></ul>`);
+      bodyEl.focus(); return;
     }
   });
 
-  function insertHtmlAtCaret(html, container){
-    container.focus();
-    document.execCommand('insertHTML', false, html);
+  // —— 列表交互：单击打开弹窗；右键菜单；按钮操作 —— //
+  listEl.addEventListener('click', (e)=>{
+    const itemEl = e.target.closest('.col-item'); if(!itemEl) return;
+    const id = itemEl.dataset.id;
+    if (e.target.closest('.del'))   return delItem(id);
+    if (e.target.closest('.share')) return openShare(id);
+    if (e.target.closest('.edit'))  return openEditor(load().find(i=>i.id===id));
+    // 点击空白/正文：打开弹窗
+    openModal(id);
+  });
+
+  listEl.addEventListener('contextmenu', (e)=>{
+    const itemEl = e.target.closest('.col-item'); if(!itemEl) return;
+    e.preventDefault();
+    const id = itemEl.dataset.id;
+    const itm = load().find(i=>i.id===id);
+    // 放到鼠标位置
+    menuEl.style.left = `${e.pageX}px`;
+    menuEl.style.top  = `${e.pageY}px`;
+    menuEl.classList.remove('hidden');
+    // 笔记才显示 Edit
+    menuEl.querySelector('[data-act="edit"]').style.display = (itm?.type==='note') ? '' : 'none';
+    menuEl.dataset.id = id;
+  });
+  document.addEventListener('click', ()=> menuEl.classList.add('hidden'));
+  menuEl.addEventListener('click', (e)=>{
+    const act = e.target.closest('button')?.dataset.act; if(!act) return;
+    const id = menuEl.dataset.id;
+    if (act==='open')  openModal(id);
+    if (act==='edit')  openEditor(load().find(i=>i.id===id));
+    if (act==='share') openShare(id);
+    if (act==='delete') delItem(id);
+    menuEl.classList.add('hidden');
+  });
+
+  function delItem(id){
+    const items = load().filter(i=>i.id!==id); save(items); render(); // 取消收藏/删除
+    // 同步 Math Stories 的星标
+    syncStoryStars();
+    if (modalEl && !modalEl.classList.contains('hidden') && viewingId===id) modalEl.classList.add('hidden');
   }
 
-  // 列表按钮（编辑/删除）
-  listEl.addEventListener('click', (e)=>{
-    const wrap = e.target.closest('.col-item'); if(!wrap) return;
-    const id = wrap.dataset.id;
-    if (e.target.closest('.del')){
-      const items = load().filter(i=>i.id!==id); save(items); render();
-    } else if (e.target.closest('.edit')){
-      const note = load().find(i=>i.id===id);
-      openEditor(note);
+  // —— 弹窗逻辑 —— //
+  function openModal(id){
+    const it = load().find(i=>i.id===id); if(!it) return;
+    viewingId = id;
+    modalTitle.value = it.title || '';
+    if (it.type==='note'){
+      modalBody.innerHTML = it.html || '';
+      modalBody.contentEditable = 'false';
+      modalEdit.style.display = '';
+    }else{
+      modalBody.textContent = it.content || '';
+      modalBody.contentEditable = 'false';
+      modalEdit.style.display = 'none';
+    }
+    modalSave.classList.add('hidden');
+    shareSheet.classList.add('hidden');
+    modalEl.classList.remove('hidden');
+  }
+  modalClose.addEventListener('click', ()=> modalEl.classList.add('hidden'));
+  modalDelete.addEventListener('click', ()=> delItem(viewingId));
+  modalEdit.addEventListener('click', ()=>{
+    modalBody.contentEditable = 'true';
+    modalBody.focus();
+    modalSave.classList.remove('hidden');
+  });
+  modalSave.addEventListener('click', ()=>{
+    const arr = load(); const idx = arr.findIndex(i=>i.id===viewingId);
+    if (idx>=0 && arr[idx].type==='note'){
+      arr[idx].title   = modalTitle.value.trim() || 'Untitled';
+      arr[idx].html    = modalBody.innerHTML;
+      arr[idx].content = modalBody.textContent;
+      arr[idx].updatedAt = Date.now();
+      save(arr); render();
+    }
+    modalBody.contentEditable='false';
+    modalSave.classList.add('hidden');
+  });
+
+  // —— 分享：系统分享 / 复制 / 分享到 Plaza —— //
+  function openShare(id){
+    openModal(id);               // 先打开详情
+    shareSheet.classList.remove('hidden');
+  }
+  shareSheet.addEventListener('click', async (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    const mode = btn.dataset.share;
+    const it = load().find(i=>i.id===viewingId); if(!it) return;
+
+    const shareText = `${it.title}\n\n${it.type==='note' ? (it.content||'') : (it.content||'')}`;
+    const shareUrl  = location.href; // 也可以定制
+
+    if (mode==='system'){
+      if (navigator.share){
+        try{ await navigator.share({ title: it.title, text: shareText, url: shareUrl }); }catch{}
+      }else{
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        alert('Copied to clipboard.');
+      }
+    } else if (mode==='copy'){
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      alert('Copied to clipboard.');
+    } else if (mode==='plaza'){
+      const posts = loadPlaza();
+      posts.push({ id:'pl_'+Date.now(), title: it.title, content: it.content, createdAt: Date.now() });
+      savePlaza(posts);
+      alert('Shared to Community Plaza.');
     }
   });
 
-  filterEl?.addEventListener('change', render);
+  // —— Math Stories：星标切换（收藏/取消收藏） —— //
+  function syncStoryStars(){
+    const items = load().filter(i=>i.type==='story');
+    const titles = new Set(items.map(i=>i.title));
+    document.querySelectorAll('.book-item').forEach(card=>{
+      const title = card.querySelector('.book-title')?.textContent?.trim();
+      const btn = card.querySelector('.collect-btn');
+      if (!btn) return;
+      if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
+    });
+  }
 
-  // —— 从 Math Stories 一键收藏 —— //
-  // 在每个 .book-item 的右上角加“星标”按钮
   document.querySelectorAll('.book-item').forEach(card=>{
     if (card.querySelector('.collect-btn')) return;
     const btn = document.createElement('button');
     btn.className='collect-btn'; btn.title='Collect';
     btn.innerHTML = '<i class="fas fa-star"></i>';
-    btn.addEventListener('click', ()=>{
-      const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
-      const items = load();
-      items.push({
-        id: 's_'+Date.now(),
-        type:'story',
-        title, content: 'Saved from Math Stories', createdAt: Date.now()
-      });
-      save(items); // 提示可选
-      // 切到 My Collection 并刷新列表
-      document.querySelector('[data-content="My Collection"]')?.click();
-      render();
-    });
     card.appendChild(btn);
   });
 
-  // —— 预留：从 Community Plaza 收藏 —— //
-  // 未来你把帖子渲染为 .collectable 元素时，我们自动加收藏按钮
-  document.querySelectorAll('#Community\\ Plaza .collectable').forEach(el=>{
-    if (el.querySelector('.collect-btn')) return;
-    const btn = document.createElement('button');
-    btn.className='collect-btn'; btn.title='Collect';
-    btn.innerHTML = '<i class="fas fa-star"></i>';
+  // 绑定切换
+  document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const title = el.getAttribute('data-title') || 'Post';
-      const content= el.textContent.trim().slice(0,160);
+      const card  = btn.closest('.book-item');
+      const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
       const items = load();
-      items.push({ id:'p_'+Date.now(), type:'post', title, content, createdAt:Date.now() });
-      save(items);
-      document.querySelector('[data-content="My Collection"]')?.click();
-      render();
+      const idx   = items.findIndex(i=>i.type==='story' && i.title===title);
+      if (idx>=0){
+        items.splice(idx,1);               // 取消收藏
+      }else{
+        items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
+      }
+      save(items); render(); syncStoryStars();
     });
-    el.appendChild(btn);
   });
 
-  // 首次进入“我的收藏”时渲染
-  const mcBtn = Array.from(document.querySelectorAll('.nav-btn'))
-    .find(b => b.dataset.content === 'My Collection');
-  mcBtn?.addEventListener('click', render);
+  // —— Community Plaza：简单 feed 渲染（显示已分享的帖子） —— //
+  function renderPlaza(){
+    const plaza = document.getElementById('Community Plaza');
+    if (!plaza) return;
+    let feed = plaza.querySelector('.plaza-feed');
+    if (!feed){
+      feed = document.createElement('div');
+      feed.className = 'plaza-feed';
+      plaza.innerHTML = ''; // 如果你原来是图片，可考虑去掉这行，改成 appendChild
+      plaza.appendChild(feed);
+    }
+    const posts = loadPlaza().sort((a,b)=>b.createdAt-a.createdAt);
+    feed.innerHTML = posts.map(p=>`
+      <div class="plaza-card">
+        <div class="title"><strong>${escapeHtml(p.title)}</strong></div>
+        <div class="body">${escapeHtml(p.content)}</div>
+        <div class="meta">${new Date(p.createdAt).toLocaleString()}</div>
+      </div>`).join('');
+  }
+  // 进入 Plaza 时刷新一下
+  const plazaBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b=>b.dataset.content==='Community Plaza');
+  plazaBtn?.addEventListener('click', renderPlaza);
 
-  // 如果直接刷新时正好在该页
-  if (document.getElementById('My Collection')?.classList.contains('active')) render();
+  // —— 首次渲染 —— //
+  const mcBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.dataset.content === 'My Collection');
+  mcBtn?.addEventListener('click', ()=>{ render(); syncStoryStars(); });
+  if (document.getElementById('My Collection')?.classList.contains('active')){ render(); syncStoryStars(); }
 })();
+
 
 
 
