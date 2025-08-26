@@ -33,68 +33,64 @@ function toggleTheme() {
 }
 window.toggleTheme = toggleTheme;
 
+
 // =======================
-// Math Tutor UI 逻辑（漂亮版）
+// Math Tutor UI 逻辑（记录对话、不跳回首页）
 // =======================
 (function initMathTutor() {
   const messages = document.getElementById('mv-messages');
   const form = document.getElementById('mv-form');
   const input = document.getElementById('mv-input');
-  const sugg = document.getElementById('mv-suggestions');
   if (!messages || !form || !input) return;
 
-  // ★ 改成后端地址
+  // ★ 把它换成后端地址
   const ENDPOINT = 'https://YOUR_BACKEND_ENDPOINT/chat';
 
-  // 示例问题 chips
-  const presets = [
-    '求半径 5 的圆面积，并写出步骤',
-    '化简：(x^2 - 9) / (x - 3)',
-    '证明直角三角形斜边中点到三顶点距离相等',
-    '计算：$$\\int_0^1 (3x^2+2x)\\,dx$$'
-  ];
-  sugg.innerHTML = presets.map(t => `<button type="button" class="mv-chip">${t}</button>`).join('');
-  sugg.addEventListener('click', e => {
-    if (e.target.classList.contains('mv-chip')) {
-      input.value = e.target.textContent;
-      input.focus();
-    }
-  });
+  // —— 关键：保持“AI Assistant”标签页处于激活 —— //
+  function keepAssistantActive() {
+    const assistant = document.getElementById('AI Assistant');
+    if (!assistant) return;
+    // 给 AI Assistant 加 active，其他移除
+    document.querySelectorAll('.content').forEach(sec => {
+      sec.classList.toggle('active', sec === assistant);
+    });
+    // 侧栏按钮高亮也同步（可选）
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.content === 'AI Assistant');
+    });
+  }
 
   // 生成一行消息（含头像 + 气泡）
-  function addRow(role, htmlOrText, typing = false) {
+  function addRow(role, text, typing = false) {
     const row = document.createElement('div');
     row.className = `mv-row ${role === 'user' ? 'mv-row-user' : 'mv-row-assistant'}`;
 
     const avatar = document.createElement('div');
     avatar.className = 'mv-avatar';
-    avatar.innerHTML = role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+    avatar.innerHTML = role === 'user'
+      ? '<i class="fas fa-user"></i>'
+      : '<i class="fas fa-robot"></i>';
 
     const bubble = document.createElement('div');
     bubble.className = 'mv-bubble';
-
     if (typing) {
       bubble.innerHTML = `
-        <span class="mv-typing">
-          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </span>`;
+        <span class="mv-typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
     } else {
-      // 默认用 textContent 防 XSS；需要渲染公式交给 MathJax；简单 **bold**/换行可后续拓展
-      bubble.textContent = htmlOrText;
+      bubble.textContent = text;
     }
 
     row.appendChild(avatar);
     row.appendChild(bubble);
     messages.appendChild(row);
     messages.scrollTop = messages.scrollHeight;
-    return bubble; // 返回气泡，方便后续替换内容
+    return bubble;
   }
 
   async function ask(question) {
-    // 用户消息
-    addRow('user', question);
-    // 助手“打字中”
-    const bubble = addRow('assistant', '', true);
+    keepAssistantActive();                // 发送前确保仍在此页
+    addRow('user', question);             // 用户消息
+    const bubble = addRow('assistant', '', true); // “打字中”
 
     try {
       const resp = await fetch(ENDPOINT, {
@@ -110,35 +106,49 @@ window.toggleTheme = toggleTheme;
 
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
-      const text = data.content || '(No response)';
-      bubble.textContent = text;
+      bubble.textContent = data.content || '(No response)';
 
-      // 触发公式渲染
-      if (window.MathJax && MathJax.typesetPromise) {
+      // LaTeX 公式渲染
+      if (window.MathJax?.typesetPromise) {
         MathJax.typesetPromise([bubble]);
       }
     } catch (e) {
       bubble.textContent = 'Network or server error. Please try again.';
       console.error(e);
+    } finally {
+      messages.scrollTop = messages.scrollHeight;
+      keepAssistantActive();              // 返回后再确认一次
     }
-    messages.scrollTop = messages.scrollHeight;
   }
 
-  // 发送表单
+  // 表单提交：阻止默认、阻止冒泡、防止影响侧栏
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    keepAssistantActive();
+
     const q = (input.value || '').trim();
     if (!q) return;
+
     input.value = '';
     ask(q);
+    return false; // 一些浏览器下更保险
   });
 
-  // Shift+Enter 换行，Enter 发送
+  // Shift+Enter 换行，Enter 发送，同时阻止冒泡
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      e.stopPropagation();
       form.dispatchEvent(new Event('submit', { cancelable: true }));
     }
   });
+
+  // 发送按钮点击也拦截冒泡
+  document.querySelector('.mv-send')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
 })();
+
+
 
