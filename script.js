@@ -150,5 +150,171 @@ window.toggleTheme = toggleTheme;
   });
 })();
 
+// =======================
+// My Collection：本地收藏/笔记
+// =======================
+(function initCollection(){
+  const listEl   = document.getElementById('col-list');
+  const filterEl = document.getElementById('col-filter');
+  const newBtn   = document.getElementById('col-new-note');
+  const editorEl = document.getElementById('col-editor');
+  const titleEl  = document.getElementById('col-title');
+  const bodyEl   = document.getElementById('col-body');
+  const saveBtn  = document.getElementById('col-save');
+  const cancelBtn= document.getElementById('col-cancel');
+  if (!listEl || !newBtn) return;
+
+  const STORE_KEY = 'mv_collection_v1';
+  let editingId = null;
+
+  const load = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+  const save = (arr) => localStorage.setItem(STORE_KEY, JSON.stringify(arr));
+
+  function render(){
+    const type = filterEl?.value || 'all';
+    const data = load().filter(it => type==='all' ? true : it.type===type)
+                       .sort((a,b)=> b.createdAt - a.createdAt);
+    listEl.innerHTML = data.map(it => `
+      <div class="col-item" data-id="${it.id}">
+        <div>
+          <div class="title"><strong>${escapeHtml(it.title || '(Untitled)')}</strong> <span class="tag">${it.type}</span></div>
+          <div class="snippet">${it.type==='note' ? it.html : escapeHtml(it.content || '')}</div>
+          <div class="meta">${new Date(it.createdAt).toLocaleString()}</div>
+        </div>
+        <div class="actions">
+          ${it.type==='note' ? `<button class="btn edit"><i class="fas fa-pen"></i></button>` : ''}
+          <button class="btn del"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  // —— 新建/编辑 笔记 —— //
+  function openEditor(note){
+    editorEl.classList.remove('hidden');
+    editingId = note?.id || null;
+    titleEl.value = note?.title || '';
+    bodyEl.innerHTML = note?.html || '';
+    bodyEl.focus();
+  }
+  function closeEditor(){ editorEl.classList.add('hidden'); editingId = null; }
+
+  newBtn.addEventListener('click', ()=> openEditor(null));
+  cancelBtn.addEventListener('click', closeEditor);
+  saveBtn.addEventListener('click', ()=>{
+    const items = load();
+    const now = Date.now();
+    const item = {
+      id: editingId || ('n_'+now),
+      type:'note',
+      title: titleEl.value.trim() || 'Untitled',
+      html:  bodyEl.innerHTML,
+      content: bodyEl.textContent,
+      createdAt: editingId ? (items.find(i=>i.id===editingId)?.createdAt || now) : now,
+      updatedAt: now
+    };
+    const idx = items.findIndex(i=>i.id===item.id);
+    if (idx>=0) items[idx]=item; else items.push(item);
+    save(items);
+    closeEditor();
+    render();
+  });
+
+  // 工具栏：execCommand + 高亮 + 清单
+  document.querySelector('.editor-toolbar')?.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    if (btn.dataset.cmd){
+      document.execCommand(btn.dataset.cmd, false, null);
+      bodyEl.focus(); return;
+    }
+    if (btn.hasAttribute('data-mark')){ // 高亮
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount){
+        const r = sel.getRangeAt(0);
+        if (!r.collapsed){
+          const mark = document.createElement('mark');
+          r.surroundContents(mark);
+        }
+      }
+      bodyEl.focus(); return;
+    }
+    if (btn.id==='insert-checklist'){
+      const html = `<ul class="checklist"><li><label><input type="checkbox"> item</label></li></ul>`;
+      insertHtmlAtCaret(html, bodyEl); bodyEl.focus(); return;
+    }
+  });
+
+  function insertHtmlAtCaret(html, container){
+    container.focus();
+    document.execCommand('insertHTML', false, html);
+  }
+
+  // 列表按钮（编辑/删除）
+  listEl.addEventListener('click', (e)=>{
+    const wrap = e.target.closest('.col-item'); if(!wrap) return;
+    const id = wrap.dataset.id;
+    if (e.target.closest('.del')){
+      const items = load().filter(i=>i.id!==id); save(items); render();
+    } else if (e.target.closest('.edit')){
+      const note = load().find(i=>i.id===id);
+      openEditor(note);
+    }
+  });
+
+  filterEl?.addEventListener('change', render);
+
+  // —— 从 Math Stories 一键收藏 —— //
+  // 在每个 .book-item 的右上角加“星标”按钮
+  document.querySelectorAll('.book-item').forEach(card=>{
+    if (card.querySelector('.collect-btn')) return;
+    const btn = document.createElement('button');
+    btn.className='collect-btn'; btn.title='Collect';
+    btn.innerHTML = '<i class="fas fa-star"></i>';
+    btn.addEventListener('click', ()=>{
+      const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
+      const items = load();
+      items.push({
+        id: 's_'+Date.now(),
+        type:'story',
+        title, content: 'Saved from Math Stories', createdAt: Date.now()
+      });
+      save(items); // 提示可选
+      // 切到 My Collection 并刷新列表
+      document.querySelector('[data-content="My Collection"]')?.click();
+      render();
+    });
+    card.appendChild(btn);
+  });
+
+  // —— 预留：从 Community Plaza 收藏 —— //
+  // 未来你把帖子渲染为 .collectable 元素时，我们自动加收藏按钮
+  document.querySelectorAll('#Community\\ Plaza .collectable').forEach(el=>{
+    if (el.querySelector('.collect-btn')) return;
+    const btn = document.createElement('button');
+    btn.className='collect-btn'; btn.title='Collect';
+    btn.innerHTML = '<i class="fas fa-star"></i>';
+    btn.addEventListener('click', ()=>{
+      const title = el.getAttribute('data-title') || 'Post';
+      const content= el.textContent.trim().slice(0,160);
+      const items = load();
+      items.push({ id:'p_'+Date.now(), type:'post', title, content, createdAt:Date.now() });
+      save(items);
+      document.querySelector('[data-content="My Collection"]')?.click();
+      render();
+    });
+    el.appendChild(btn);
+  });
+
+  // 首次进入“我的收藏”时渲染
+  const mcBtn = Array.from(document.querySelectorAll('.nav-btn'))
+    .find(b => b.dataset.content === 'My Collection');
+  mcBtn?.addEventListener('click', render);
+
+  // 如果直接刷新时正好在该页
+  if (document.getElementById('My Collection')?.classList.contains('active')) render();
+})();
+
 
 
