@@ -85,7 +85,45 @@
         </div>
       </section>
 
-      <section id="My Collection"   class="content hidden"><img src="images/My Collection.png"  class="full-image" /></section>
+      <!-- My Collection：可写笔记 + 列表 -->
+      <section id="My Collection" class="content hidden collection">
+        <div class="col-header">
+          <h2>My Collection</h2>
+          <div class="col-actions">
+            <select id="col-filter">
+              <option value="all">All</option>
+              <option value="note">Notes</option>
+              <option value="story">Stories</option>
+              <option value="post">Posts</option>
+            </select>
+            <button id="col-new-note" class="btn primary"><i class="fas fa-plus"></i> New Note</button>
+          </div>
+        </div>
+
+        <!-- 编辑器 -->
+        <div id="col-editor" class="editor hidden">
+          <div class="editor-toolbar">
+            <button type="button" data-cmd="bold"        title="Bold"><i class="fas fa-bold"></i></button>
+            <button type="button" data-cmd="italic"      title="Italic"><i class="fas fa-italic"></i></button>
+            <button type="button" data-cmd="underline"   title="Underline"><i class="fas fa-underline"></i></button>
+            <button type="button" data-mark               title="Highlight"><i class="fas fa-highlighter"></i></button>
+            <span class="sep"></span>
+            <button type="button" data-cmd="insertUnorderedList" title="Bulleted List"><i class="fas fa-list-ul"></i></button>
+            <button type="button" data-cmd="insertOrderedList"   title="Numbered List"><i class="fas fa-list-ol"></i></button>
+            <button type="button" id="insert-checklist"          title="Checklist"><i class="fas fa-tasks"></i></button>
+          </div>
+          <input id="col-title" class="editor-title" placeholder="Title..." />
+          <div id="col-body" class="editor-body" contenteditable="true" data-placeholder="Write something..."></div>
+          <div class="editor-footer">
+            <button id="col-cancel" class="btn">Cancel</button>
+            <button id="col-save"   class="btn primary">Save</button>
+          </div>
+        </div>
+
+        <!-- 列表 -->
+        <div id="col-list" class="col-list"></div>
+      </section>
+
       
       <section id="AI Assistant" class="content hidden ai-assistant">
          <!-- 顶部中心的图标 + 标题 -->
@@ -119,6 +157,7 @@
 </div>
 
 </html>
+
 
 
 
