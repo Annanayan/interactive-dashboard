@@ -43,7 +43,21 @@
 
       <!-- 动态内容区 -->
       <section id="MainPage"        class="content"><img src="images/Main page.png"         class="full-image" /></section>
-      <section id="Daily Review"    class="content hidden"><img src="images/Daily Review.png" class="full-image" /></section>
+      <section id="Daily Review" class="content hidden daily-review">
+        <div class="dr-card" role="region" aria-labelledby="dr-title">
+            <h2 id="dr-title" class="dr-title">Hi, Anna!</h2>
+            <p class="dr-lead">Welcome back! Let’s strengthen your math foundation.</p>
+
+            <ul class="dr-list">
+              <li><span class="dr-k">Math learning builds step by step</span> — today’s review helps you master what you’ve learned before.</li>
+              <li>Humans tend to forget — <span class="dr-k">smart, spaced reviewing</span> makes memory stronger.</li>
+              <li>We’ve gathered your recent <span class="dr-k">tricky problems</span>. Follow along and boost your skills.</li>
+            </ul>
+
+            <button class="dr-cta" id="start-review">Review</button>
+          </div>
+        </section>
+
 
       <section id="Daily Practice"  class="content hidden">
         <div class="external-link">
@@ -100,6 +114,7 @@
 </div>
 
 </html>
+
 
 
 
