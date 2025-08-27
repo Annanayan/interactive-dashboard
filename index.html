@@ -64,13 +64,40 @@
 
 
 
-      <section id="Daily Practice"  class="content hidden">
-        <div class="external-link">
-          <a href="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754" target="_blank">
-            Click here to start your Daily Practice!
-          </a>
-        </div>
-      </section>
+      <section id="Daily Practice" class="content hidden dp">
+        <div class="dp-board" role="region" aria-label="Practice map">
+            <!-- 地图 -->
+            <img src="images/math map_green.png" alt="Math Map" class="dp-map" />
+
+            <!-- 钉子：用百分比定位（可按需微调 top/left） -->
+            <!-- ① 这个钉子直达 Voiceflow -->
+            <button class="dp-pin" style="top:58%; left:36%;"
+                    aria-label="Start today's practice"
+                    title="Start today's practice"
+                    data-url="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754">
+              <i class="fas fa-map-marker-alt"></i>
+              <span class="dp-pulse"></span>
+            </button>
+
+            <!-- 其余示例钉子（占位，未绑定 URL，可按需增加/删除/改位置） -->
+            <button class="dp-pin" style="top:30%; left:48%;" aria-label="Algebra hub" title="Algebra hub">
+              <i class="fas fa-map-marker-alt"></i>
+            </button>
+
+            <button class="dp-pin" style="top:40%; left:62%;" aria-label="Geometry hub" title="Geometry hub">
+              <i class="fas fa-map-marker-alt"></i>
+            </button>
+
+            <button class="dp-pin" style="top:72%; left:83%;" aria-label="Calculus hub" title="Calculus hub">
+              <i class="fas fa-map-marker-alt"></i>
+            </button>
+
+            <button class="dp-pin" style="top:52%; left:54%;" aria-label="Number sense" title="Number sense">
+              <i class="fas fa-map-marker-alt"></i>
+            </button>
+          </div>
+        </section>
+
 
       <section id="Math Stories"    class="content hidden">
         <div class="book-grid">
@@ -188,6 +215,7 @@
 </div>
 
 </html>
+
 
 
 
