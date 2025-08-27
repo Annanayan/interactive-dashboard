@@ -597,4 +597,55 @@ body.theme-dark  section[id="Daily Review"].daily-review .dr-line{
 .plaza-card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; }
 .plaza-card .meta{ color:#6b7280; font-size:12px; margin-top:6px; }
 
+/* ===== Daily Practice - Map ===== */
+.dp-board{
+  position: relative;
+  width: min(980px, 92%);
+  /* 让容器居中 */
+  margin: 0 auto;
+}
+.dp-map{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:16px;
+  box-shadow:0 12px 32px rgba(0,0,0,.18);
+}
+
+/* 钉子（依赖 Font Awesome 已在 <head> 引入） */
+.dp-pin{
+  position:absolute;
+  transform: translate(-50%, -100%); /* 钉尖对准坐标 */
+  border:none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+.dp-pin i{
+  font-size:28px;
+  color:#ff8a00;               /* 钉子主色 */
+  text-shadow: 0 2px 8px rgba(0,0,0,.25);
+  transition: transform .15s ease, filter .15s ease;
+}
+.dp-pin:hover i{ transform: translateY(-2px) scale(1.06); filter: brightness(1.05); }
+
+/* 呼吸圈（给绑定了 data-url 的钉子加动效） */
+.dp-pin .dp-pulse{
+  position:absolute; left:50%; top:50%;
+  width:10px; height:10px; border-radius:50%;
+  transform: translate(-50%,-50%);
+  box-shadow: 0 0 0 0 rgba(255,138,0,.55);
+  animation: dpPulse 1.8s infinite;
+  pointer-events:none;
+}
+@keyframes dpPulse{
+  0%   { box-shadow: 0 0 0 0     rgba(255,138,0,.55); }
+  70%  { box-shadow: 0 0 0 18px  rgba(255,138,0,0); }
+  100% { box-shadow: 0 0 0 0     rgba(255,138,0,0); }
+}
+
+/* 浅色主题适配：让钉子阴影更柔和 */
+body.theme-fantasy .dp-map{ box-shadow:0 10px 26px rgba(120,0,80,.16); }
+
+
 
