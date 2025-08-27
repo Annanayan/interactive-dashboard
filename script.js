@@ -150,44 +150,6 @@ window.toggleTheme = toggleTheme;
   });
 })();
 
-
-
-  // —— Math Stories：星标切换（收藏/取消收藏） —— //
-  function syncStoryStars(){
-    const items = load().filter(i=>i.type==='story');
-    const titles = new Set(items.map(i=>i.title));
-    document.querySelectorAll('.book-item').forEach(card=>{
-      const title = card.querySelector('.book-title')?.textContent?.trim();
-      const btn = card.querySelector('.collect-btn');
-      if (!btn) return;
-      if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
-    });
-  }
-
-  document.querySelectorAll('.book-item').forEach(card=>{
-    if (card.querySelector('.collect-btn')) return;
-    const btn = document.createElement('button');
-    btn.className='collect-btn'; btn.title='Collect';
-    btn.innerHTML = '<i class="fas fa-star"></i>';
-    card.appendChild(btn);
-  });
-
-  // 绑定切换
-  document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const card  = btn.closest('.book-item');
-      const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
-      const items = load();
-      const idx   = items.findIndex(i=>i.type==='story' && i.title===title);
-      if (idx>=0){
-        items.splice(idx,1);               // 取消收藏
-      }else{
-        items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
-      }
-      save(items); render(); syncStoryStars();
-    });
-  });
-
 // =======================
 // My Collection：预览 + 弹窗查看/编辑 + 右键菜单 + 分享 + 取消收藏
 // =======================
@@ -415,9 +377,10 @@ window.toggleTheme = toggleTheme;
     }
   });
 
-  // —— Math Stories 星标（收藏/取消）同步 —— //
+  // —— Math Stories：星标切换（收藏/取消收藏） —— //
   function syncStoryStars(){
-    const titles = new Set(load().filter(i=>i.type==='story').map(i=>i.title));
+    const items = load().filter(i=>i.type==='story');
+    const titles = new Set(items.map(i=>i.title));
     document.querySelectorAll('.book-item').forEach(card=>{
       const title = card.querySelector('.book-title')?.textContent?.trim();
       const btn = card.querySelector('.collect-btn');
@@ -425,7 +388,7 @@ window.toggleTheme = toggleTheme;
       if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
     });
   }
-  // 初始补星标按钮
+
   document.querySelectorAll('.book-item').forEach(card=>{
     if (card.querySelector('.collect-btn')) return;
     const btn = document.createElement('button');
@@ -433,32 +396,22 @@ window.toggleTheme = toggleTheme;
     btn.innerHTML = '<i class="fas fa-star"></i>';
     card.appendChild(btn);
   });
-  // 切换收藏
+
+  // 绑定切换
   document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const card = btn.closest('.book-item');
+      const card  = btn.closest('.book-item');
       const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
       const items = load();
       const idx   = items.findIndex(i=>i.type==='story' && i.title===title);
-      if (idx>=0) items.splice(idx,1); else items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
+      if (idx>=0){
+        items.splice(idx,1);               // 取消收藏
+      }else{
+        items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
+      }
       save(items); render(); syncStoryStars();
     });
   });
-
-  // —— 进入/切换时刷新 —— //
-  function onActivate(){
-    render(); syncStoryStars();
-  }
-  const mcBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b=>b.dataset.content==='My Collection');
-  mcBtn?.addEventListener('click', onActivate);
-  if (document.getElementById('My Collection')?.classList.contains('active')) onActivate();
-
-  // 筛选（修复你说“点 Notes 不生效”）
-  filterEl?.addEventListener('change', render);
-  filterEl?.addEventListener('input', render);
-})();
-
-
 
   // —— Community Plaza：简单 feed 渲染（显示已分享的帖子） —— //
   function renderPlaza(){
@@ -524,6 +477,7 @@ window.toggleTheme = toggleTheme;
   const PLAZA_KEY = 'mv_plaza_posts_v1';
   const COLLECTION_KEY = 'mv_collection_v1';
 
+
   // 工具函数
   const loadCol = () => JSON.parse(localStorage.getItem(COLLECTION_KEY) || '[]');
   const saveCol = (arr) => localStorage.setItem(COLLECTION_KEY, JSON.stringify(arr));
@@ -532,6 +486,7 @@ window.toggleTheme = toggleTheme;
   const rand = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
   const NAMES = ['Mia','Leo','Ava','Noah','Sophia','Liam','Emma','Ethan','Chloe','Mason','Olivia','Lucas','Isla','Henry','Amelia','Jack','Grace','James','Zoe','Daniel'];
   const CHANS = ['r/calculus','r/ExplainTheJoke','r/confidentlyincorrect','r/askmath','r/math','r/learnmath'];
+
   const randName = ()=> NAMES[rand(0, NAMES.length-1)];
   const randChan  = ()=> CHANS[rand(0, CHANS.length-1)];
 
@@ -553,10 +508,6 @@ window.toggleTheme = toggleTheme;
 
   // 静态种子（可以替换标题；缩略图路径已改）
   const SEEDS = [
-    { title: 'Do I need to be a math expert to understand this?', thumb: 'images/p2.jpg' },
-    { title: '"Thank God I\'m a math major."',                  thumb: 'images/p3.jpg' },
-    { title: 'My Wife (Math Teacher) Cannot Figure This Out',   thumb: 'images/p4.jpg' },
-    { title: '8 year old is obsessed with math, plz help.',     thumb: 'images/p1.jpg' },
   ].map(t => ({
     id: 'seed_' + Math.random().toString(36).slice(2),
     type: 'seed',
@@ -580,7 +531,6 @@ window.toggleTheme = toggleTheme;
     content: p.content || '',
     thumb: '' // 目前不带缩略图
   }));
-
   // 合并 & 时间倒序
   let all = [...userPosts, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
 
@@ -632,7 +582,6 @@ window.toggleTheme = toggleTheme;
 
   function render(){ FEED.innerHTML = all.map(cardHTML).join(''); }
   render();
-
   // 点击星标：收藏/取消收藏 + UI 同步
   FEED.addEventListener('click', (e)=>{
     const star = e.target.closest('.post-star');
@@ -662,12 +611,3 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
-
-
-
-
-
-
-
-
-
