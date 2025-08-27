@@ -698,5 +698,33 @@ body.theme-dark .post-title{ color:#e8ecff; }
 body.theme-dark .post-head, body.theme-dark .post-meta{ color:#a8b0d6; }
 body.theme-fantasy .post-card{ background:#fff7fb; border-color:#ffd8f0; }
 
+/* --- Plaza: hover 放大 & 星标按钮 --- */
+.post-card{
+  position: relative;                         /* 让右上角星标绝对定位 */
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.post-card:hover{
+  transform: translateY(-2px) scale(1.012);
+  box-shadow: 0 14px 36px rgba(0,0,0,.16);
+}
+
+/* 右上角收藏星标 */
+.post-star{
+  position:absolute; top:8px; right:10px;
+  border:none; background:#fff; color:#98a2b3;
+  width:32px; height:32px; border-radius:50%;
+  display:grid; place-items:center; cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.10);
+  transition: transform .1s ease, filter .15s ease, color .15s ease, background .15s ease;
+}
+.post-star:hover{ transform: scale(1.06); filter: brightness(1.02); }
+.post-star.on{ background:#fff7d8; color:#b97300; } /* 选中时“金色”感 */
+
+/* 暗色/粉色主题微调 */
+body.theme-dark .post-star{ background:#2a2f4a; color:#c6cbe8; }
+body.theme-dark .post-star.on{ background:#4a3b12; color:#ffd86a; }
+body.theme-fantasy .post-star{ background:#fff0fb; color:#b08bb3; }
+body.theme-fantasy .post-star.on{ background:#ffe8b6; color:#a86500; }
+
 
 
