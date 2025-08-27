@@ -501,12 +501,12 @@ window.toggleTheme = toggleTheme;
     return `<span class="avatar" style="background:${bg}">${initials}</span>`;
   }
 
-  // 种子帖子（标题取自你的截图）
+  // 种子帖子（标题取自截图）
   const SEEDS = [
-    { title: '8 year old is obsessed with math, plz help.',  thumb: 'images/plaza/p1.jpg' },
-    { title: 'Do I need to be a math expert to understand this?', thumb: 'images/plaza/p2.jpg' },
-    { title: '"Thank God I\'m a math major."', thumb: 'images/plaza/p3.jpg' },
-    { title: 'My Wife (Math Teacher) Cannot Figure This Out', thumb: 'images/plaza/p4.jpg' },
+    { title: '8 year old is obsessed with math, plz help.',  thumb: 'images/p1.jpg' },
+    { title: 'Do I need to be a math expert to understand this?', thumb: 'images/p2.jpg' },
+    { title: '"Thank God I\'m a math major."', thumb: 'images/p3.jpg' },
+    { title: 'My Wife (Math Teacher) Cannot Figure This Out', thumb: 'images/p4.jpg' },
   ].map(t => ({
     id: 'seed_' + Math.random().toString(36).slice(2),
     type: 'seed',
@@ -519,7 +519,7 @@ window.toggleTheme = toggleTheme;
     thumb: t.thumb // 如果图片不存在，会自动隐藏（见 onerror）
   }));
 
-  // 读取你从 “My Collection → Share to Community Plaza” 发来的帖子
+  // 读取从 “My Collection → Share to Community Plaza” 发来的帖子
   const userPosts = JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]').map(p => ({
     id: p.id, type: 'user',
     title: p.title || 'Shared post',
@@ -555,7 +555,7 @@ window.toggleTheme = toggleTheme;
   function render(){ FEED.innerHTML = all.map(cardHTML).join(''); }
   render();
 
-  // 当你从 My Collection 再次分享过来时，切到此页会重渲染
+  // 当从 My Collection 再次分享过来时，切到此页会重渲染
   const plazaBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b=>b.dataset.content==='Community Plaza');
   plazaBtn?.addEventListener('click', ()=> {
     const refresh = JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]').map(p => ({
@@ -567,6 +567,7 @@ window.toggleTheme = toggleTheme;
     FEED.innerHTML = merged.map(cardHTML).join('');
   });
 })();
+
 
 
 
