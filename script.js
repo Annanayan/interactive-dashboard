@@ -189,9 +189,7 @@ window.toggleTheme = toggleTheme;
   });
 
 // =======================
-// My Collection：预览 + 弹窗（×关闭） + 笔记在弹窗内可编辑自动保存
-// + 右键菜单 + 分享 + Math Stories 星标可取消
-// + 图片/文件上传（基于 dataURL；建议<=1.5MB）
+// My Collection：预览 + 弹窗查看/编辑 + 右键菜单 + 分享 + 取消收藏
 // =======================
 (function initCollection(){
   const listEl   = document.getElementById('col-list');
@@ -203,48 +201,50 @@ window.toggleTheme = toggleTheme;
   const saveBtn  = document.getElementById('col-save');
   const cancelBtn= document.getElementById('col-cancel');
 
-  const imgPicker = document.getElementById('col-img');
-  const filePicker= document.getElementById('col-file');
-  const btnImg    = document.getElementById('insert-image');
-  const btnFile   = document.getElementById('insert-file');
-
-  const modalEl   = document.getElementById('col-modal');
+  const modalEl  = document.getElementById('col-modal');
   const modalTitle= document.getElementById('modal-title');
   const modalBody = document.getElementById('modal-body');
+  const modalEdit = document.getElementById('modal-edit');
+  const modalSave = document.getElementById('modal-save');
   const modalDelete= document.getElementById('modal-delete');
   const modalClose = document.getElementById('modal-close');
-  const modalShare = document.getElementById('modal-share');
-  const modalSaved = document.getElementById('modal-saved');
-  const shareSheet = document.getElementById('share-sheet');
-  const menuEl    = document.getElementById('col-menu');
+
+  const shareSheet= document.getElementById('share-sheet');
+
+  const menuEl   = document.getElementById('col-menu');
 
   if (!listEl || !newBtn) return;
 
   const STORE_KEY = 'mv_collection_v1';
   const PLAZA_KEY = 'mv_plaza_posts_v1';
-  let editingId = null;   // 编辑器用
-  let viewingId = null;   // 弹窗查看/编辑
-  let autosaveTimer = null;
+  let editingId = null;      // 新建/编辑用
+  let viewingId = null;      // 弹窗中查看的条目
 
   const load = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
   const save = (arr) => localStorage.setItem(STORE_KEY, JSON.stringify(arr));
+
   const loadPlaza = () => JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]');
   const savePlaza = (arr) => localStorage.setItem(PLAZA_KEY, JSON.stringify(arr));
 
   function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-  const preview = (s, n=140) => { const t=(s||'').replace(/\s+/g,' ').trim(); return t.length>n?t.slice(0,n)+'…':t; };
-  const plural2singular = { all:'all', notes:'note', stories:'story', posts:'post' };
+  const preview = (s, n=140) => {
+    const t = (s||'').replace(/\s+/g,' ').trim();
+    return t.length>n ? t.slice(0,n)+'…' : t;
+  };
 
-  // 渲染列表（只展示预览）
+  // —— 渲染列表（只显示预览） —— //
   function render(){
-    const key = plural2singular[(filterEl?.value||'all')] || 'all';
-    const data = load().filter(it => key==='all' ? true : it.type===key)
-                       .sort((a,b)=>b.createdAt-a.createdAt);
-    listEl.innerHTML = data.map(it => `
+    const type = filterEl?.value || 'all';
+    const data = load().filter(it => type==='all' ? true : it.type===type)
+                       .sort((a,b)=> b.createdAt - a.createdAt);
+
+    listEl.innerHTML = data.map(it => {
+      const text = it.type==='note' ? (it.content || '') : (it.content || '');
+      return `
       <div class="col-item" data-id="${it.id}">
         <div class="main">
           <div class="title"><strong>${escapeHtml(it.title || '(Untitled)')}</strong> <span class="tag">${it.type}</span></div>
-          <div class="snippet">${escapeHtml(preview(it.type==='note' ? it.content : it.content))}</div>
+          <div class="snippet">${escapeHtml(preview(text))}</div>
           <div class="meta">${new Date(it.createdAt).toLocaleString()}</div>
         </div>
         <div class="actions">
@@ -252,22 +252,20 @@ window.toggleTheme = toggleTheme;
           <button class="btn share" title="Share"><i class="fas fa-share"></i></button>
           <button class="btn del"   title="Delete"><i class="fas fa-trash"></i></button>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   // —— 新建/编辑 笔记（编辑器卡片） —— //
   function openEditor(note){
     editorEl.classList.remove('hidden');
-    // 修复“工具栏/保存按钮偶发消失”
-    editorEl.querySelector('.editor-toolbar').style.display = 'flex';
-    document.getElementById('col-save').style.display = '';
-
     editingId = note?.id || null;
     titleEl.value = note?.title || '';
     bodyEl.innerHTML = note?.html || '';
     bodyEl.focus();
   }
   function closeEditor(){ editorEl.classList.add('hidden'); editingId = null; }
+
   newBtn.addEventListener('click', ()=> openEditor(null));
   cancelBtn.addEventListener('click', closeEditor);
   saveBtn.addEventListener('click', ()=>{
@@ -284,68 +282,51 @@ window.toggleTheme = toggleTheme;
     };
     const idx = items.findIndex(i=>i.id===item.id);
     if (idx>=0) items[idx]=item; else items.push(item);
-    save(items); closeEditor(); render();
+    save(items);
+    closeEditor();
+    render();
   });
 
-  // 工具栏：文本命令 / 高亮 / 清单 / 图片 / 文件
+  // 工具栏
   document.querySelector('.editor-toolbar')?.addEventListener('click', (e)=>{
     const btn = e.target.closest('button'); if(!btn) return;
     if (btn.dataset.cmd){ document.execCommand(btn.dataset.cmd,false,null); bodyEl.focus(); return; }
     if (btn.hasAttribute('data-mark')){
       const sel = window.getSelection();
       if (sel && sel.rangeCount && !sel.getRangeAt(0).collapsed){
-        const r = sel.getRangeAt(0); const mark=document.createElement('mark'); r.surroundContents(mark);
+        const r = sel.getRangeAt(0); const mark = document.createElement('mark'); r.surroundContents(mark);
       }
       bodyEl.focus(); return;
     }
-  });
-  document.getElementById('insert-checklist')?.addEventListener('click', ()=>{
-    document.execCommand('insertHTML', false, `<ul class="checklist"><li><label><input type="checkbox"> item</label></li></ul>`);
-    bodyEl.focus();
+    if (btn.id==='insert-checklist'){
+      document.execCommand('insertHTML', false, `<ul class="checklist"><li><label><input type="checkbox"> item</label></li></ul>`);
+      bodyEl.focus(); return;
+    }
   });
 
-  // 图片/文件插入（dataURL；建议<=1.5MB）
-  btnImg?.addEventListener('click', ()=> imgPicker?.click());
-  btnFile?.addEventListener('click',()=> filePicker?.click());
-  imgPicker?.addEventListener('change', async e=>{
-    const f = e.target.files[0]; if(!f) return;
-    if (f.size > 1.5*1024*1024) return alert('Image too large (>1.5MB).');
-    const data = await fileToDataURL(f);
-    document.execCommand('insertHTML', false, `<img src="${data}" alt="${escapeHtml(f.name)}" style="max-width:100%;border-radius:8px;">`);
-    bodyEl.focus();
-    imgPicker.value='';
-  });
-  filePicker?.addEventListener('change', async e=>{
-    const f = e.target.files[0]; if(!f) return;
-    if (f.size > 1.5*1024*1024) return alert('File too large (>1.5MB).');
-    const data = await fileToDataURL(f);
-    const html = `<p><a href="${data}" download="${escapeHtml(f.name)}">📎 ${escapeHtml(f.name)}</a></p>`;
-    document.execCommand('insertHTML', false, html);
-    bodyEl.focus();
-    filePicker.value='';
-  });
-  function fileToDataURL(file){ return new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(file); }); }
-
-  // 列表交互：单击打开弹窗；按钮；右键菜单
+  // —— 列表交互：单击打开弹窗；右键菜单；按钮操作 —— //
   listEl.addEventListener('click', (e)=>{
-    const el = e.target.closest('.col-item'); if(!el) return;
-    const id = el.dataset.id;
+    const itemEl = e.target.closest('.col-item'); if(!itemEl) return;
+    const id = itemEl.dataset.id;
     if (e.target.closest('.del'))   return delItem(id);
     if (e.target.closest('.share')) return openShare(id);
     if (e.target.closest('.edit'))  return openEditor(load().find(i=>i.id===id));
-    openModal(id); // 其余区域点击：打开弹窗
+    // 点击空白/正文：打开弹窗
+    openModal(id);
   });
 
   listEl.addEventListener('contextmenu', (e)=>{
-    const el = e.target.closest('.col-item'); if(!el) return;
+    const itemEl = e.target.closest('.col-item'); if(!itemEl) return;
     e.preventDefault();
-    const id = el.dataset.id;
-    const item = load().find(i=>i.id===id);
-    menuEl.style.left = `${e.pageX}px`; menuEl.style.top = `${e.pageY}px`;
+    const id = itemEl.dataset.id;
+    const itm = load().find(i=>i.id===id);
+    // 放到鼠标位置
+    menuEl.style.left = `${e.pageX}px`;
+    menuEl.style.top  = `${e.pageY}px`;
     menuEl.classList.remove('hidden');
-    menuEl.dataset.id = id;
     // 笔记才显示 Edit
-    menuEl.querySelector('[data-act="edit"]').style.display = (item?.type==='note') ? '' : 'none';
+    menuEl.querySelector('[data-act="edit"]').style.display = (itm?.type==='note') ? '' : 'none';
+    menuEl.dataset.id = id;
   });
   document.addEventListener('click', ()=> menuEl.classList.add('hidden'));
   menuEl.addEventListener('click', (e)=>{
@@ -359,80 +340,78 @@ window.toggleTheme = toggleTheme;
   });
 
   function delItem(id){
-    const arr = load().filter(i=>i.id!==id); save(arr); render(); syncStoryStars();
-    if (!modalEl.classList.contains('hidden') && viewingId===id) modalEl.classList.add('hidden');
+    const items = load().filter(i=>i.id!==id); save(items); render(); // 取消收藏/删除
+    // 同步 Math Stories 的星标
+    syncStoryStars();
+    if (modalEl && !modalEl.classList.contains('hidden') && viewingId===id) modalEl.classList.add('hidden');
   }
 
-  // —— 弹窗：笔记可编辑（自动保存）；非笔记只读；右上角 × 关闭 —— //
+  // —— 弹窗逻辑 —— //
   function openModal(id){
     const it = load().find(i=>i.id===id); if(!it) return;
-    viewingId = id; modalSaved.textContent='';
+    viewingId = id;
     modalTitle.value = it.title || '';
-
     if (it.type==='note'){
       modalBody.innerHTML = it.html || '';
-      modalBody.contentEditable = 'true';  // 直接可编辑
+      modalBody.contentEditable = 'false';
+      modalEdit.style.display = '';
     }else{
       modalBody.textContent = it.content || '';
-      modalBody.contentEditable = 'false'; // Story/Post 只读
+      modalBody.contentEditable = 'false';
+      modalEdit.style.display = 'none';
     }
+    modalSave.classList.add('hidden');
     shareSheet.classList.add('hidden');
     modalEl.classList.remove('hidden');
   }
-  function closeModal(){ modalEl.classList.add('hidden'); viewingId=null; }
-  modalClose.addEventListener('click', closeModal);
+  modalClose.addEventListener('click', ()=> modalEl.classList.add('hidden'));
   modalDelete.addEventListener('click', ()=> delItem(viewingId));
-  modalShare.addEventListener('click', ()=> openShare(viewingId));
-  // 点击遮罩或 Esc 关闭
-  modalEl.addEventListener('click', e=>{ if(e.target===modalEl) closeModal(); });
-  document.addEventListener('keydown', e=>{ if(!modalEl.classList.contains('hidden') && e.key==='Escape') closeModal(); });
-
-  // 自动保存（仅笔记；标题/正文输入 600ms 后保存，关闭时也保存）
-  [modalTitle, modalBody].forEach(el=>{
-    el.addEventListener('input', ()=>{
-      if (!viewingId) return;
-      const arr = load(); const idx = arr.findIndex(i=>i.id===viewingId);
-      if (idx<0 || arr[idx].type!=='note') return; // 非笔记不保存
-      const doSave = ()=>{
-        arr[idx].title   = modalTitle.value.trim() || 'Untitled';
-        arr[idx].html    = modalBody.innerHTML;
-        arr[idx].content = modalBody.textContent;
-        arr[idx].updatedAt = Date.now();
-        save(arr); modalSaved.textContent='Saved';
-        render();
-        clearTimeout(autosaveTimer); autosaveTimer=null;
-      };
-      modalSaved.textContent='Saving...';
-      clearTimeout(autosaveTimer);
-      autosaveTimer = setTimeout(doSave, 600);
-    });
+  modalEdit.addEventListener('click', ()=>{
+    modalBody.contentEditable = 'true';
+    modalBody.focus();
+    modalSave.classList.remove('hidden');
   });
-  // 关闭时兜底保存
-  modalEl.addEventListener('transitionend', ()=>{}); // 预留
-  window.addEventListener('beforeunload', ()=>{
-    if (autosaveTimer){ clearTimeout(autosaveTimer); autosaveTimer=null; }
+  modalSave.addEventListener('click', ()=>{
+    const arr = load(); const idx = arr.findIndex(i=>i.id===viewingId);
+    if (idx>=0 && arr[idx].type==='note'){
+      arr[idx].title   = modalTitle.value.trim() || 'Untitled';
+      arr[idx].html    = modalBody.innerHTML;
+      arr[idx].content = modalBody.textContent;
+      arr[idx].updatedAt = Date.now();
+      save(arr); render();
+    }
+    modalBody.contentEditable='false';
+    modalSave.classList.add('hidden');
   });
 
   // —— 分享：系统分享 / 复制 / 分享到 Plaza —— //
   function openShare(id){
-    openModal(id); // 先展示
+    openModal(id);               // 先打开详情
     shareSheet.classList.remove('hidden');
   }
   shareSheet.addEventListener('click', async (e)=>{
     const btn = e.target.closest('button'); if(!btn) return;
     const mode = btn.dataset.share;
     const it = load().find(i=>i.id===viewingId); if(!it) return;
-    const shareText = `${it.title}\n\n${it.content||''}`;
-    const shareUrl  = location.href;
+
+    const shareText = `${it.title}\n\n${it.type==='note' ? (it.content||'') : (it.content||'')}`;
+    const shareUrl  = location.href; // 也可以定制
 
     if (mode==='system'){
-      if (navigator.share){ try{ await navigator.share({ title: it.title, text: shareText, url: shareUrl }); }catch{} }
-      else { await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`); alert('Copied to clipboard.'); }
+      if (navigator.share){
+        try{ await navigator.share({ title: it.title, text: shareText, url: shareUrl }); }catch{}
+      }else{
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        alert('Copied to clipboard.');
+      }
     } else if (mode==='copy'){
-      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`); alert('Copied to clipboard.');
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      alert('Copied to clipboard.');
     } else if (mode==='plaza'){
-      const posts = loadPlaza(); posts.push({ id:'pl_'+Date.now(), title: it.title, content: it.content, createdAt: Date.now() });
-      savePlaza(posts); alert('Shared to Community Plaza.');
+      const posts = loadPlaza();
+      posts.push({ id:'pl_'+Date.now(), title: it.title, content: it.content, createdAt: Date.now() });
+      savePlaza(posts);
+      alert('Shared to Community Plaza.');
     }
   });
 
@@ -683,6 +662,7 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
+
 
 
 
