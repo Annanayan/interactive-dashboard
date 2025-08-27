@@ -477,7 +477,6 @@ window.toggleTheme = toggleTheme;
   const PLAZA_KEY = 'mv_plaza_posts_v1';
   const COLLECTION_KEY = 'mv_collection_v1';
 
-
   // 工具函数
   const loadCol = () => JSON.parse(localStorage.getItem(COLLECTION_KEY) || '[]');
   const saveCol = (arr) => localStorage.setItem(COLLECTION_KEY, JSON.stringify(arr));
@@ -486,7 +485,6 @@ window.toggleTheme = toggleTheme;
   const rand = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
   const NAMES = ['Mia','Leo','Ava','Noah','Sophia','Liam','Emma','Ethan','Chloe','Mason','Olivia','Lucas','Isla','Henry','Amelia','Jack','Grace','James','Zoe','Daniel'];
   const CHANS = ['r/calculus','r/ExplainTheJoke','r/confidentlyincorrect','r/askmath','r/math','r/learnmath'];
-
   const randName = ()=> NAMES[rand(0, NAMES.length-1)];
   const randChan  = ()=> CHANS[rand(0, CHANS.length-1)];
 
@@ -508,6 +506,10 @@ window.toggleTheme = toggleTheme;
 
   // 静态种子（可以替换标题；缩略图路径已改）
   const SEEDS = [
+    { title: 'Do I need to be a math expert to understand this?', thumb: 'images/p2.jpg' },
+    { title: '"Thank God I\'m a math major."',                  thumb: 'images/p3.jpg' },
+    { title: 'My Wife (Math Teacher) Cannot Figure This Out',   thumb: 'images/p4.jpg' },
+    { title: '8 year old is obsessed with math, plz help.',     thumb: 'images/p1.jpg' },
   ].map(t => ({
     id: 'seed_' + Math.random().toString(36).slice(2),
     type: 'seed',
@@ -531,6 +533,7 @@ window.toggleTheme = toggleTheme;
     content: p.content || '',
     thumb: '' // 目前不带缩略图
   }));
+
   // 合并 & 时间倒序
   let all = [...userPosts, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
 
@@ -582,6 +585,7 @@ window.toggleTheme = toggleTheme;
 
   function render(){ FEED.innerHTML = all.map(cardHTML).join(''); }
   render();
+
   // 点击星标：收藏/取消收藏 + UI 同步
   FEED.addEventListener('click', (e)=>{
     const star = e.target.closest('.post-star');
@@ -611,3 +615,9 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
+
+
+
+
+
+
