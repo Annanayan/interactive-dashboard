@@ -628,6 +628,8 @@ body.theme-dark  section[id="Daily Review"].daily-review .dr-line{
   transition: transform .15s ease, filter .15s ease;
 }
 .dp-pin:hover i{ transform: translateY(-2px) scale(1.06); filter: brightness(1.05); }
+.dp-map{ position: relative; z-index: 1; }
+.dp-pin{ position: absolute; z-index: 2; cursor: pointer; }
 
 /* 呼吸圈（给绑定了 data-url 的钉子加动效） */
 .dp-pin .dp-pulse{
@@ -725,5 +727,6 @@ body.theme-dark .post-star{ background:#2a2f4a; color:#c6cbe8; }
 body.theme-dark .post-star.on{ background:#4a3b12; color:#ffd86a; }
 body.theme-fantasy .post-star{ background:#fff0fb; color:#b08bb3; }
 body.theme-fantasy .post-star.on{ background:#ffe8b6; color:#a86500; }
+
 
 
