@@ -1,5 +1,3 @@
-    
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +12,6 @@
 <body>
   <div class="container">
     <!-- ▸▸▸ 侧 栏 ◂◂◂ -->
-
     <aside class="sidebar">
       <div class="logo">
         <img src="images/logo.png" class="logo-image" />
@@ -64,6 +61,9 @@
           </div>
         </section>
 
+
+
+
       <section id="Daily Practice" class="content hidden dp">
         <div class="dp-board" role="region" aria-label="Practice map">
             <!-- 地图 -->
@@ -107,4 +107,123 @@
           <div class="book-item"><img src="images/Draw Plus Math....png"    class="book-image"><div class="book-title">Draw Plus Math…</div></div>
           <div class="book-item"><img src="images/Pythagoras and ....png"   class="book-image"><div class="book-title">Pythagoras and …</div></div>
           <div class="book-item"><img src="images/The Best of Times.png"    class="book-image"><div class="book-title">The Best of Times</div></div>
-          <div class="book-item"><img src="images/What is Your An..
+          <div class="book-item"><img src="images/What is Your An....png"   class="book-image"><div class="book-title">What is Your An…</div></div>
+          <div class="book-item"><img src="images/Sir Cumference (2).png"   class="book-image"><div class="book-title">Sir Cumference (2)</div></div>
+        </div>
+      </section>
+
+      <section id="My Collection" class="content hidden collection">
+        <div class="col-header">
+            <h2>My Collection</h2>
+            <div class="col-actions">
+              <select id="col-filter">
+                <option value="all">All</option>
+                <option value="note">Notes</option>
+                <option value="story">Stories</option>
+                <option value="post">Posts</option>
+              </select>
+              <button id="col-new-note" class="btn primary"><i class="fas fa-plus"></i> New Note</button>
+            </div>
+          </div>
+
+          <!-- 编辑器（新建/编辑笔记） -->
+          <div id="col-editor" class="editor hidden">
+            <div class="editor-toolbar">
+              <button type="button" data-cmd="bold"        title="Bold"><i class="fas fa-bold"></i></button>
+              <button type="button" data-cmd="italic"      title="Italic"><i class="fas fa-italic"></i></button>
+              <button type="button" data-cmd="underline"   title="Underline"><i class="fas fa-underline"></i></button>
+              <button type="button" data-mark               title="Highlight"><i class="fas fa-highlighter"></i></button>
+              <span class="sep"></span>
+              <button type="button" data-cmd="insertUnorderedList" title="Bulleted List"><i class="fas fa-list-ul"></i></button>
+              <button type="button" data-cmd="insertOrderedList"   title="Numbered List"><i class="fas fa-list-ol"></i></button>
+              <button type="button" id="insert-checklist"          title="Checklist"><i class="fas fa-tasks"></i></button>
+            </div>
+            <input id="col-title" class="editor-title" placeholder="Title..." />
+            <div id="col-body" class="editor-body" contenteditable="true" data-placeholder="Write something..."></div>
+            <div class="editor-footer">
+              <button id="col-cancel" class="btn">Cancel</button>
+              <button id="col-save"   class="btn primary">Save</button>
+            </div>
+          </div>
+
+          <!-- 列表：只显示预览 -->
+          <div id="col-list" class="col-list"></div>
+
+          <!-- 详情弹窗：可查看全文；笔记可编辑 -->
+          <div id="col-modal" class="col-modal hidden" aria-modal="true" role="dialog">
+            <div class="col-modal-content">
+              <div class="col-modal-head">
+                <input id="modal-title" class="editor-title" />
+                <div class="modal-actions">
+                  <button id="modal-edit"   class="btn"><i class="fas fa-pen"></i> Edit</button>
+                  <button id="modal-share"  class="btn"><i class="fas fa-share"></i> Share</button>
+                  <button id="modal-delete" class="btn"><i class="fas fa-trash"></i> Delete</button>
+                  <button id="modal-close"  class="btn">Close</button>
+                  <button id="modal-save"   class="btn primary hidden">Save</button>
+                </div>
+              </div>
+              <div id="modal-body" class="editor-body" contenteditable="false"></div>
+
+              <!-- 分享面板 -->
+              <div id="share-sheet" class="share-sheet hidden">
+                <button data-share="system"><i class="fas fa-paper-plane"></i> System Share</button>
+                <button data-share="copy"><i class="fas fa-link"></i> Copy</button>
+                <button data-share="plaza"><i class="fas fa-users"></i> Share to Community Plaza</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右键菜单 -->
+          <div id="col-menu" class="col-menu hidden">
+            <button data-act="open"><i class="fas fa-eye"></i> Open</button>
+            <button data-act="edit"><i class="fas fa-pen"></i> Edit</button>
+            <button data-act="share"><i class="fas fa-share"></i> Share</button>
+            <button data-act="delete"><i class="fas fa-trash"></i> Delete</button>
+          </div>
+        </section>
+
+      
+      <section id="AI Assistant" class="content hidden ai-assistant">
+         <!-- 顶部中心的图标 + 标题 -->
+        <div class="mv-hero">
+            <img src="images/logo.png" alt="Math Solver" class="mv-hero-logo" />
+            <h1 class="mv-hero-title">Math Solver</h1>
+        </div>
+        
+        <div id="mv-chat" class="mv-card">
+          <div id="mv-messages" class="mv-messages" aria-live="polite"></div>
+
+          <form id="mv-form" class="mv-composer">
+            <textarea id="mv-input" rows="2"
+              placeholder="How can I help you today?"></textarea>
+            <button type="submit" class="mv-send">Send</button>
+          </form>
+        </div>
+
+        <!-- 公式渲染 -->
+        <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      </section>
+
+      <section id="Community Plaza" class="content hidden plaza">
+        <div id="plaza-feed" class="plaza-feed" aria-live="polite"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+  <div class="magic-switch" onclick="toggleTheme()">
+  🪄
+</div>
+
+</html>
+
+
+
+
+
+
+
+
+
