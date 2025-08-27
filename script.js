@@ -444,22 +444,18 @@ window.toggleTheme = toggleTheme;
 
 // ===== Daily Practice - Map pins =====
 (function bindPracticePins(){
-  // ✅ 用属性选择器，兼容 id 里有空格的情况
-  const container = document.querySelector('section[id="Daily Practice"].dp');
+  const container = document.querySelector('#Daily Practice.dp');
   if (!container) return;
 
-  // 点击钉子 => 新开 Voiceflow
+  // 只给有 data-url 的钉子绑定跳转
   container.addEventListener('click', (e)=>{
     const pin = e.target.closest('.dp-pin');
     if (!pin) return;
     const url = pin.dataset.url;
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
+    if (url) window.open(url, '_blank', 'noopener');
   });
 
   // 键盘可达性：Enter/Space 触发
-  container.querySelectorAll('.dp-pin').forEach(pin => pin.tabIndex = 0);
   container.addEventListener('keydown', (e)=>{
     const pin = e.target.closest('.dp-pin');
     if (!pin) return;
@@ -468,7 +464,6 @@ window.toggleTheme = toggleTheme;
       pin.click();
     }
   });
-})();
 
   // 让所有钉子能被 Tab 聚焦
   container.querySelectorAll('.dp-pin').forEach(pin => pin.setAttribute('tabindex','0'));
@@ -620,8 +615,6 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
-
-
 
 
 
