@@ -598,39 +598,6 @@ body.theme-dark  section[id="Daily Review"].daily-review .dr-line{
 .plaza-card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; }
 .plaza-card .meta{ color:#6b7280; font-size:12px; margin-top:6px; }
 
-/* 预览两行省略 */
-.collection .col-item .snippet{
-  color:#4b5563;
-  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-  overflow:hidden; max-height:3.2em;
-}
-
-/* 弹窗 */
-.col-modal.hidden{ display:none; }
-.col-modal{ position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:999; }
-.col-modal-content{ width:min(900px,92%); background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.35); }
-.col-modal-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; border-bottom:1px solid #edf0f5; background:#fafbff; }
-.col-modal .editor-title{ border:none; outline:none; font-size:20px; flex:1; }
-.col-modal .editor-body{ min-height:260px; background:#fff; }
-.modal-actions .icon.only{ padding:8px; width:38px; }
-#modal-saved{ font-size:12px; color:#6b7280; margin-right:8px; }
-
-/* 右键菜单 */
-.col-menu.hidden{ display:none; }
-.col-menu{ position:fixed; z-index:1000; background:#fff; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.14); overflow:hidden; }
-.col-menu button{ display:block; width:100%; text-align:left; padding:8px 12px; border:none; background:#fff; cursor:pointer; }
-.col-menu button:hover{ background:#f6f7ff; }
-
-/* 工具栏始终可见（修复偶发隐藏） */
-.collection .editor-toolbar{ display:flex !important; }
-
-/* Math Stories 星标：可切换 */
-.collect-btn{ transition: filter .15s ease, transform .06s ease; }
-.collect-btn.on{ background:#ffd86a; color:#7a4b00; box-shadow:0 6px 14px rgba(0,0,0,.25); }
-.collect-btn:active{ transform: translateY(1px); }
-
-
-
 
 /* ===== Daily Practice - Map ===== */
 .dp-board{
@@ -760,6 +727,7 @@ body.theme-dark .post-star{ background:#2a2f4a; color:#c6cbe8; }
 body.theme-dark .post-star.on{ background:#4a3b12; color:#ffd86a; }
 body.theme-fantasy .post-star{ background:#fff0fb; color:#b08bb3; }
 body.theme-fantasy .post-star.on{ background:#ffe8b6; color:#a86500; }
+
 
 
 
