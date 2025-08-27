@@ -469,6 +469,105 @@ window.toggleTheme = toggleTheme;
   container.querySelectorAll('.dp-pin').forEach(pin => pin.setAttribute('tabindex','0'));
 })();
 
+// ========== Community Plaza：种子帖子 + 本地分享的帖子一起显示 ==========
+(function initPlaza(){
+  const FEED = document.getElementById('plaza-feed');
+  if (!FEED) return;
+
+  const PLAZA_KEY = 'mv_plaza_posts_v1';
+
+  // 随机数据（作者/时间/票数/评论数）
+  const NAMES = ['Mia','Leo','Ava','Noah','Sophia','Liam','Emma','Ethan','Chloe','Mason','Olivia','Lucas','Isla','Henry','Amelia','Jack','Grace','James','Zoe','Daniel'];
+  const CHANS = ['r/calculus','r/ExplainTheJoke','r/confidentlyincorrect','r/askmath','r/math','r/learnmath'];
+  const rand = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
+  const randName = ()=> NAMES[rand(0, NAMES.length-1)];
+  const randChan  = ()=> CHANS[rand(0, CHANS.length-1)];
+  const randDateAug2025 = ()=>{
+    const day = rand(1,31);
+    const d = new Date(2025,7,day, rand(8,22), rand(0,59));  // 2025-08-xx
+    return d.toISOString();
+  };
+  const fmtCN = iso=>{
+    const d = new Date(iso);
+    return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+  };
+  const votesTxt = n => (n>=10000? (n/10000).toFixed(1)+'万' : (n>=1000? (n/1000).toFixed(1)+'千' : n));
+
+  // 生成梯度头像（首字母）
+  function avatarHTML(name){
+    const initials = name.slice(0,1).toUpperCase();
+    const h = rand(0,360);
+    const bg = `linear-gradient(135deg, hsl(${h}deg 80% 55%), hsl(${(h+40)%360}deg 80% 45%))`;
+    return `<span class="avatar" style="background:${bg}">${initials}</span>`;
+  }
+
+  // 种子帖子（标题取自你的截图）
+  const SEEDS = [
+    { title: '8 year old is obsessed with math, plz help.',  thumb: 'images/plaza/p1.jpg' },
+    { title: 'Do I need to be a math expert to understand this?', thumb: 'images/plaza/p2.jpg' },
+    { title: '"Thank God I\'m a math major."', thumb: 'images/plaza/p3.jpg' },
+    { title: 'My Wife (Math Teacher) Cannot Figure This Out', thumb: 'images/plaza/p4.jpg' },
+  ].map(t => ({
+    id: 'seed_' + Math.random().toString(36).slice(2),
+    type: 'seed',
+    title: t.title,
+    channel: randChan(),
+    author: randName(),
+    createdAt: randDateAug2025(),
+    votes: rand(1200, 48000),
+    comments: rand(180, 2500),
+    thumb: t.thumb // 如果图片不存在，会自动隐藏（见 onerror）
+  }));
+
+  // 读取你从 “My Collection → Share to Community Plaza” 发来的帖子
+  const userPosts = JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]').map(p => ({
+    id: p.id, type: 'user',
+    title: p.title || 'Shared post',
+    channel: 'MathVillage',
+    author: 'Anna',
+    createdAt: new Date(p.createdAt || Date.now()).toISOString(),
+    votes: rand(20, 120), comments: rand(0, 20),
+    content: p.content || '',
+    thumb: ''  // 用户分享目前不带缩略图
+  }));
+
+  // 合并 & 排序（时间倒序；用户贴靠前）
+  const all = [...userPosts, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+
+  function cardHTML(p){
+    return `
+      <article class="post-card" data-id="${p.id}">
+        <div class="post-main">
+          <div class="post-head">
+            ${avatarHTML(p.author)}
+            <span class="chan">${p.channel}</span>
+            <span class="dot"></span>
+            <span>${fmtCN(p.createdAt)}</span>
+          </div>
+          <div class="post-title">${p.title}</div>
+          <div class="post-meta">${votesTxt(p.votes)} 票 · ${votesTxt(p.comments)} 条评论</div>
+        </div>
+        ${p.thumb ? `<img class="post-thumb" src="${p.thumb}" alt="" onerror="this.remove()">` : `<span></span>`}
+      </article>
+    `;
+  }
+
+  function render(){ FEED.innerHTML = all.map(cardHTML).join(''); }
+  render();
+
+  // 当你从 My Collection 再次分享过来时，切到此页会重渲染
+  const plazaBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b=>b.dataset.content==='Community Plaza');
+  plazaBtn?.addEventListener('click', ()=> {
+    const refresh = JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]').map(p => ({
+      id: p.id, type:'user', title:p.title || 'Shared post', channel:'MathVillage',
+      author:'Anna', createdAt:new Date(p.createdAt||Date.now()).toISOString(),
+      votes: rand(20,120), comments: rand(0,20), content:p.content || '', thumb:''
+    }));
+    const merged = [...refresh, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+    FEED.innerHTML = merged.map(cardHTML).join('');
+  });
+})();
+
 
 
 
