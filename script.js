@@ -469,31 +469,34 @@ window.toggleTheme = toggleTheme;
   container.querySelectorAll('.dp-pin').forEach(pin => pin.setAttribute('tabindex','0'));
 })();
 
-// ========== Community Plaza：种子帖子 + 本地分享的帖子一起显示 ==========
+// ========== Community Plaza：英文 UI + 星标收藏到 My Collection + hover 放大 ==========
 (function initPlaza(){
   const FEED = document.getElementById('plaza-feed');
   if (!FEED) return;
 
   const PLAZA_KEY = 'mv_plaza_posts_v1';
+  const COLLECTION_KEY = 'mv_collection_v1';
 
-  // 随机数据（作者/时间/票数/评论数）
+  // 工具函数
+  const loadCol = () => JSON.parse(localStorage.getItem(COLLECTION_KEY) || '[]');
+  const saveCol = (arr) => localStorage.setItem(COLLECTION_KEY, JSON.stringify(arr));
+  const loadPlaza = () => JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]');
+
+  const rand = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
   const NAMES = ['Mia','Leo','Ava','Noah','Sophia','Liam','Emma','Ethan','Chloe','Mason','Olivia','Lucas','Isla','Henry','Amelia','Jack','Grace','James','Zoe','Daniel'];
   const CHANS = ['r/calculus','r/ExplainTheJoke','r/confidentlyincorrect','r/askmath','r/math','r/learnmath'];
-  const rand = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
   const randName = ()=> NAMES[rand(0, NAMES.length-1)];
   const randChan  = ()=> CHANS[rand(0, CHANS.length-1)];
+
   const randDateAug2025 = ()=>{
     const day = rand(1,31);
-    const d = new Date(2025,7,day, rand(8,22), rand(0,59));  // 2025-08-xx
+    const d = new Date(2025,7,day, rand(8,22), rand(0,59));  // 2025-08
     return d.toISOString();
   };
-  const fmtCN = iso=>{
-    const d = new Date(iso);
-    return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
-  };
-  const votesTxt = n => (n>=10000? (n/10000).toFixed(1)+'万' : (n>=1000? (n/1000).toFixed(1)+'千' : n));
 
-  // 生成梯度头像（首字母）
+  const fmtEN = iso => new Date(iso).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }); // e.g. Aug 26, 2025
+  const nShort = n => n>=1e6? (n/1e6).toFixed(1)+'M' : n>=1e3? (n/1e3).toFixed(1)+'k' : String(n);
+
   function avatarHTML(name){
     const initials = name.slice(0,1).toUpperCase();
     const h = rand(0,360);
@@ -501,12 +504,12 @@ window.toggleTheme = toggleTheme;
     return `<span class="avatar" style="background:${bg}">${initials}</span>`;
   }
 
-  // 种子帖子（标题取自截图）
+  // 静态种子（可以替换标题；缩略图路径已改）
   const SEEDS = [
-    { title: '8 year old is obsessed with math, plz help.',  thumb: 'images/p1.jpg' },
     { title: 'Do I need to be a math expert to understand this?', thumb: 'images/p2.jpg' },
-    { title: '"Thank God I\'m a math major."', thumb: 'images/p3.jpg' },
-    { title: 'My Wife (Math Teacher) Cannot Figure This Out', thumb: 'images/p4.jpg' },
+    { title: '"Thank God I\'m a math major."',                  thumb: 'images/p3.jpg' },
+    { title: 'My Wife (Math Teacher) Cannot Figure This Out',   thumb: 'images/p4.jpg' },
+    { title: '8 year old is obsessed with math, plz help.',     thumb: 'images/p1.jpg' },
   ].map(t => ({
     id: 'seed_' + Math.random().toString(36).slice(2),
     type: 'seed',
@@ -516,11 +519,11 @@ window.toggleTheme = toggleTheme;
     createdAt: randDateAug2025(),
     votes: rand(1200, 48000),
     comments: rand(180, 2500),
-    thumb: t.thumb // 如果图片不存在，会自动隐藏（见 onerror）
+    thumb: t.thumb
   }));
 
-  // 读取从 “My Collection → Share to Community Plaza” 发来的帖子
-  const userPosts = JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]').map(p => ({
+  // 来自 “My Collection → Share to Community Plaza” 的用户贴（置顶）
+  const userPosts = loadPlaza().map(p => ({
     id: p.id, type: 'user',
     title: p.title || 'Shared post',
     channel: 'MathVillage',
@@ -528,24 +531,52 @@ window.toggleTheme = toggleTheme;
     createdAt: new Date(p.createdAt || Date.now()).toISOString(),
     votes: rand(20, 120), comments: rand(0, 20),
     content: p.content || '',
-    thumb: ''  // 用户分享目前不带缩略图
+    thumb: '' // 目前不带缩略图
   }));
 
-  // 合并 & 排序（时间倒序；用户贴靠前）
-  const all = [...userPosts, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+  // 合并 & 时间倒序
+  let all = [...userPosts, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
 
+  // 判断某条 post 是否已经收藏到 My Collection
+  function isFaved(id){
+    return loadCol().some(i => i.type==='post' && i.fromId===id);
+  }
+  function toggleFav(post){
+    const arr = loadCol();
+    const idx = arr.findIndex(i => i.type==='post' && i.fromId===post.id);
+    if (idx>=0){
+      arr.splice(idx,1); // 取消收藏
+    }else{
+      arr.push({
+        id: 'p_' + Date.now(),
+        type: 'post',
+        fromId: post.id,                 // 关联 plaza 里的 id，方便同步
+        title: post.title,
+        content: `${post.channel} • ${post.author} • ${fmtEN(post.createdAt)}`,
+        createdAt: Date.now()
+      });
+    }
+    saveCol(arr);
+  }
+
+  // 渲染一条卡片（英文 UI + 右上角星标）
   function cardHTML(p){
+    const starred = isFaved(p.id) ? 'on' : '';
     return `
       <article class="post-card" data-id="${p.id}">
+        <button class="post-star ${starred}" aria-label="Save or remove">
+          <i class="fas fa-star"></i>
+        </button>
+
         <div class="post-main">
           <div class="post-head">
             ${avatarHTML(p.author)}
             <span class="chan">${p.channel}</span>
             <span class="dot"></span>
-            <span>${fmtCN(p.createdAt)}</span>
+            <span>${fmtEN(p.createdAt)}</span>
           </div>
           <div class="post-title">${p.title}</div>
-          <div class="post-meta">${votesTxt(p.votes)} 票 · ${votesTxt(p.comments)} 条评论</div>
+          <div class="post-meta">${nShort(p.votes)} votes · ${nShort(p.comments)} comments</div>
         </div>
         ${p.thumb ? `<img class="post-thumb" src="${p.thumb}" alt="" onerror="this.remove()">` : `<span></span>`}
       </article>
@@ -555,18 +586,37 @@ window.toggleTheme = toggleTheme;
   function render(){ FEED.innerHTML = all.map(cardHTML).join(''); }
   render();
 
-  // 当从 My Collection 再次分享过来时，切到此页会重渲染
+  // 点击星标：收藏/取消收藏 + UI 同步
+  FEED.addEventListener('click', (e)=>{
+    const star = e.target.closest('.post-star');
+    if (!star) return;
+    const card = star.closest('.post-card');
+    const id = card?.dataset.id;
+    const post = all.find(p => p.id === id);
+    if (!post) return;
+    toggleFav(post);
+    star.classList.toggle('on', isFaved(id));
+  });
+
+  // 切到 Plaza 页时刷新（为了反映 My Collection 的变动）
   const plazaBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b=>b.dataset.content==='Community Plaza');
-  plazaBtn?.addEventListener('click', ()=> {
-    const refresh = JSON.parse(localStorage.getItem(PLAZA_KEY) || '[]').map(p => ({
-      id: p.id, type:'user', title:p.title || 'Shared post', channel:'MathVillage',
-      author:'Anna', createdAt:new Date(p.createdAt||Date.now()).toISOString(),
-      votes: rand(20,120), comments: rand(0,20), content:p.content || '', thumb:''
+  plazaBtn?.addEventListener('click', ()=>{
+    // 重新读用户帖
+    const refreshedUser = loadPlaza().map(p => ({
+      id: p.id, type: 'user',
+      title: p.title || 'Shared post',
+      channel: 'MathVillage',
+      author: 'Anna',
+      createdAt: new Date(p.createdAt || Date.now()).toISOString(),
+      votes: rand(20, 120), comments: rand(0, 20),
+      content: p.content || '', thumb: ''
     }));
-    const merged = [...refresh, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
-    FEED.innerHTML = merged.map(cardHTML).join('');
+    all = [...refreshedUser, ...SEEDS].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+    render();
   });
 })();
+
+
 
 
 
