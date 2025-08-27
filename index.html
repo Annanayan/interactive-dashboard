@@ -116,12 +116,11 @@
         <div class="col-header">
             <h2>My Collection</h2>
             <div class="col-actions">
-              <!-- 注意：这里的 value 用复数；JS 里会映射到单数 -->
               <select id="col-filter">
                 <option value="all">All</option>
-                <option value="notes">Notes</option>
-                <option value="stories">Stories</option>
-                <option value="posts">Posts</option>
+                <option value="note">Notes</option>
+                <option value="story">Stories</option>
+                <option value="post">Posts</option>
               </select>
               <button id="col-new-note" class="btn primary"><i class="fas fa-plus"></i> New Note</button>
             </div>
@@ -138,12 +137,6 @@
               <button type="button" data-cmd="insertUnorderedList" title="Bulleted List"><i class="fas fa-list-ul"></i></button>
               <button type="button" data-cmd="insertOrderedList"   title="Numbered List"><i class="fas fa-list-ol"></i></button>
               <button type="button" id="insert-checklist"          title="Checklist"><i class="fas fa-tasks"></i></button>
-              <span class="sep"></span>
-              <!-- 新增：图片/文件上传 -->
-              <button type="button" id="insert-image" title="Insert image"><i class="fas fa-image"></i></button>
-              <button type="button" id="insert-file"  title="Attach file"><i class="fas fa-paperclip"></i></button>
-              <input type="file" id="col-img"  accept="image/*" hidden>
-              <input type="file" id="col-file" hidden>
             </div>
             <input id="col-title" class="editor-title" placeholder="Title..." />
             <div id="col-body" class="editor-body" contenteditable="true" data-placeholder="Write something..."></div>
@@ -153,20 +146,20 @@
             </div>
           </div>
 
-          <!-- 列表（只显示预览） -->
+          <!-- 列表：只显示预览 -->
           <div id="col-list" class="col-list"></div>
 
-          <!-- 详情弹窗：可查看全文；笔记可在弹窗内编辑 + 自动保存；非笔记无保存按钮 -->
+          <!-- 详情弹窗：可查看全文；笔记可编辑 -->
           <div id="col-modal" class="col-modal hidden" aria-modal="true" role="dialog">
             <div class="col-modal-content">
               <div class="col-modal-head">
                 <input id="modal-title" class="editor-title" />
                 <div class="modal-actions">
-                  <span id="modal-saved" class="muted"></span>
+                  <button id="modal-edit"   class="btn"><i class="fas fa-pen"></i> Edit</button>
                   <button id="modal-share"  class="btn"><i class="fas fa-share"></i> Share</button>
                   <button id="modal-delete" class="btn"><i class="fas fa-trash"></i> Delete</button>
-                  <!-- 右上角“×”始终存在；不再使用 Save 按钮 -->
-                  <button id="modal-close"  class="btn icon only" title="Close"><i class="fas fa-times"></i></button>
+                  <button id="modal-close"  class="btn">Close</button>
+                  <button id="modal-save"   class="btn primary hidden">Save</button>
                 </div>
               </div>
               <div id="modal-body" class="editor-body" contenteditable="false"></div>
@@ -188,7 +181,6 @@
             <button data-act="delete"><i class="fas fa-trash"></i> Delete</button>
           </div>
         </section>
-
 
       
       <section id="AI Assistant" class="content hidden ai-assistant">
@@ -226,6 +218,7 @@
 </div>
 
 </html>
+
 
 
 
