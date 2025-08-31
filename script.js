@@ -34,8 +34,72 @@ function toggleTheme() {
 window.toggleTheme = toggleTheme;
 
 
+// ===== Daily Practice - Map pins =====
+(function bindPracticePins(){
+  const container = document.querySelector('#Daily Practice.dp');
+  if (!container) return;
+
+  // 只给有 data-url 的钉子绑定跳转
+  container.addEventListener('click', (e)=>{
+    const pin = e.target.closest('.dp-pin');
+    if (!pin) return;
+    const url = pin.dataset.url;
+    if (url) window.open(url, '_blank', 'noopener');
+  });
+
+  // 键盘可达性：Enter/Space 触发
+  container.addEventListener('keydown', (e)=>{
+    const pin = e.target.closest('.dp-pin');
+    if (!pin) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      pin.click();
+    }
+  });
+
+  // 让所有钉子能被 Tab 聚焦
+  container.querySelectorAll('.dp-pin').forEach(pin => pin.setAttribute('tabindex','0'));
+})();
+
+  // —— Math Stories：星标切换（收藏/取消收藏） —— //
+  function syncStoryStars(){
+    const items = load().filter(i=>i.type==='story');
+    const titles = new Set(items.map(i=>i.title));
+    document.querySelectorAll('.book-item').forEach(card=>{
+      const title = card.querySelector('.book-title')?.textContent?.trim();
+      const btn = card.querySelector('.collect-btn');
+      if (!btn) return;
+      if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
+    });
+  }
+
+  document.querySelectorAll('.book-item').forEach(card=>{
+    if (card.querySelector('.collect-btn')) return;
+    const btn = document.createElement('button');
+    btn.className='collect-btn'; btn.title='Collect';
+    btn.innerHTML = '<i class="fas fa-star"></i>';
+    card.appendChild(btn);
+  });
+
+  // 绑定切换
+  document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const card  = btn.closest('.book-item');
+      const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
+      const items = load();
+      const idx   = items.findIndex(i=>i.type==='story' && i.title===title);
+      if (idx>=0){
+        items.splice(idx,1);               // 取消收藏
+      }else{
+        items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
+      }
+      save(items); render(); syncStoryStars();
+    });
+  });
+
+
 // =======================
-// Math Tutor UI 逻辑（记录对话、不跳回首页）
+// Math Tutor UI 逻辑（修复版）
 // =======================
 (function initMathTutor() {
   const messages = document.getElementById('mv-messages');
@@ -43,24 +107,44 @@ window.toggleTheme = toggleTheme;
   const input = document.getElementById('mv-input');
   if (!messages || !form || !input) return;
 
-  // ★ 把它换成后端地址
+  // 更新为你的后端地址
   const ENDPOINT = 'http://localhost:3000/chat';
 
-  // —— 关键：保持“AI Assistant”标签页处于激活 —— //
+  // 保持 AI Assistant 页面激活
   function keepAssistantActive() {
     const assistant = document.getElementById('AI Assistant');
     if (!assistant) return;
-    // 给 AI Assistant 加 active，其他移除
     document.querySelectorAll('.content').forEach(sec => {
       sec.classList.toggle('active', sec === assistant);
     });
-    // 侧栏按钮高亮也同步（可选）
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.content === 'AI Assistant');
     });
   }
 
-  // 生成一行消息（含头像 + 气泡）
+  // 格式化消息内容（处理 LaTeX 和换行）
+  function formatContent(text) {
+    // 处理换行符
+    let formatted = text.replace(/\n/g, '<br>');
+    
+    // 处理 LaTeX 公式
+    // 替换 $$ ... $$ 为块级公式
+    formatted = formatted.replace(/\$\$(.*?)\$\$/g, '<div class="math-block">\\[$1\\]</div>');
+    
+    // 替换 $ ... $ 为行内公式
+    formatted = formatted.replace(/\$(.*?)\$/g, '<span class="math-inline">\\($1\\)</span>');
+    
+    // 处理 \frac 等常见 LaTeX 命令（如果没有被 $ 包围）
+    formatted = formatted.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '<span class="math-inline">\\(\\frac{$1}{$2}\\)</span>');
+    
+    // 加粗步骤标题
+    formatted = formatted.replace(/\*\*(Step \d+:.*?)\*\*/g, '<strong>$1</strong>');
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    return formatted;
+  }
+
+  // 生成消息行
   function addRow(role, text, typing = false) {
     const row = document.createElement('div');
     row.className = `mv-row ${role === 'user' ? 'mv-row-user' : 'mv-row-assistant'}`;
@@ -73,11 +157,17 @@ window.toggleTheme = toggleTheme;
 
     const bubble = document.createElement('div');
     bubble.className = 'mv-bubble';
+    
     if (typing) {
       bubble.innerHTML = `
-        <span class="mv-typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
+        <span class="mv-typing">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </span>`;
     } else {
-      bubble.textContent = text;
+      // 使用 innerHTML 而不是 textContent 来支持 HTML 格式
+      bubble.innerHTML = role === 'assistant' ? formatContent(text) : text;
     }
 
     row.appendChild(avatar);
@@ -88,9 +178,9 @@ window.toggleTheme = toggleTheme;
   }
 
   async function ask(question) {
-    keepAssistantActive();                // 发送前确保仍在此页
-    addRow('user', question);             // 用户消息
-    const bubble = addRow('assistant', '', true); // “打字中”
+    keepAssistantActive();
+    addRow('user', question);
+    const bubble = addRow('assistant', '', true);
 
     try {
       const resp = await fetch(ENDPOINT, {
@@ -98,7 +188,17 @@ window.toggleTheme = toggleTheme;
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [
-            { role: 'system', content: 'You are a friendly math tutor for teens. Explain step-by-step, show reasoning clearly, and use LaTeX when helpful.' },
+            { 
+              role: 'system', 
+              content: `You are a friendly math tutor for teens. 
+                Format your responses clearly:
+                - Use ** for bold text (e.g., **Step 1:**)
+                - Use $ for inline math (e.g., $x = 5$)
+                - Use $$ for display math (e.g., $$x^2 + y^2 = z^2$$)
+                - Use line breaks between steps
+                - Show work step by step
+                - Explain reasoning clearly`
+            },
             { role: 'user', content: question }
           ]
         })
@@ -106,22 +206,33 @@ window.toggleTheme = toggleTheme;
 
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
-      bubble.textContent = data.content || '(No response)';
+      
+      // 使用格式化后的内容
+      bubble.innerHTML = formatContent(data.content || '(No response)');
 
-      // LaTeX 公式渲染
-      if (window.MathJax?.typesetPromise) {
-        MathJax.typesetPromise([bubble]);
+      // 触发 MathJax 重新渲染
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([bubble]).catch((e) => {
+          console.log('MathJax rendering error:', e);
+        });
       }
+      
+      // 确保 MathJax 处理新内容
+      if (window.MathJax && MathJax.startup) {
+        MathJax.startup.document.clear();
+        MathJax.startup.document.updateDocument();
+      }
+      
     } catch (e) {
-      bubble.textContent = 'Network or server error. Please try again.';
+      bubble.innerHTML = 'Network or server error. Please try again.';
       console.error(e);
     } finally {
       messages.scrollTop = messages.scrollHeight;
-      keepAssistantActive();              // 返回后再确认一次
+      keepAssistantActive();
     }
   }
 
-  // 表单提交：阻止默认、阻止冒泡、防止影响侧栏
+  // 表单提交
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -132,10 +243,10 @@ window.toggleTheme = toggleTheme;
 
     input.value = '';
     ask(q);
-    return false; // 一些浏览器下更保险
+    return false;
   });
 
-  // Shift+Enter 换行，Enter 发送，同时阻止冒泡
+  // Enter 发送，Shift+Enter 换行
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -144,11 +255,31 @@ window.toggleTheme = toggleTheme;
     }
   });
 
-  // 发送按钮点击也拦截冒泡
   document.querySelector('.mv-send')?.addEventListener('click', (e) => {
     e.stopPropagation();
   });
+  
+  // 配置 MathJax
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    },
+    startup: {
+      pageReady: () => {
+        return MathJax.startup.defaultPageReady().then(() => {
+          console.log('MathJax 初始化完成');
+        });
+      }
+    }
+  };
 })();
+
 
 // =======================
 // My Collection：预览 + 弹窗查看/编辑 + 右键菜单 + 分享 + 取消收藏
@@ -377,42 +508,7 @@ window.toggleTheme = toggleTheme;
     }
   });
 
-  // —— Math Stories：星标切换（收藏/取消收藏） —— //
-  function syncStoryStars(){
-    const items = load().filter(i=>i.type==='story');
-    const titles = new Set(items.map(i=>i.title));
-    document.querySelectorAll('.book-item').forEach(card=>{
-      const title = card.querySelector('.book-title')?.textContent?.trim();
-      const btn = card.querySelector('.collect-btn');
-      if (!btn) return;
-      if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
-    });
-  }
-
-  document.querySelectorAll('.book-item').forEach(card=>{
-    if (card.querySelector('.collect-btn')) return;
-    const btn = document.createElement('button');
-    btn.className='collect-btn'; btn.title='Collect';
-    btn.innerHTML = '<i class="fas fa-star"></i>';
-    card.appendChild(btn);
-  });
-
-  // 绑定切换
-  document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const card  = btn.closest('.book-item');
-      const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
-      const items = load();
-      const idx   = items.findIndex(i=>i.type==='story' && i.title===title);
-      if (idx>=0){
-        items.splice(idx,1);               // 取消收藏
-      }else{
-        items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
-      }
-      save(items); render(); syncStoryStars();
-    });
-  });
-
+  
   // —— Community Plaza：简单 feed 渲染（显示已分享的帖子） —— //
   function renderPlaza(){
     const plaza = document.getElementById('Community Plaza');
@@ -442,32 +538,8 @@ window.toggleTheme = toggleTheme;
   if (document.getElementById('My Collection')?.classList.contains('active')){ render(); syncStoryStars(); }
 })();
 
-// ===== Daily Practice - Map pins =====
-(function bindPracticePins(){
-  const container = document.querySelector('#Daily Practice.dp');
-  if (!container) return;
 
-  // 只给有 data-url 的钉子绑定跳转
-  container.addEventListener('click', (e)=>{
-    const pin = e.target.closest('.dp-pin');
-    if (!pin) return;
-    const url = pin.dataset.url;
-    if (url) window.open(url, '_blank', 'noopener');
-  });
 
-  // 键盘可达性：Enter/Space 触发
-  container.addEventListener('keydown', (e)=>{
-    const pin = e.target.closest('.dp-pin');
-    if (!pin) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      pin.click();
-    }
-  });
-
-  // 让所有钉子能被 Tab 聚焦
-  container.querySelectorAll('.dp-pin').forEach(pin => pin.setAttribute('tabindex','0'));
-})();
 
 // ========== Community Plaza：英文 UI + 星标收藏到 My Collection + hover 放大 ==========
 (function initPlaza(){
@@ -615,9 +687,6 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
-
-
-
 
 
 
