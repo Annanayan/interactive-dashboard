@@ -61,8 +61,8 @@ window.toggleTheme = toggleTheme;
   container.querySelectorAll('.dp-pin').forEach(pin => pin.setAttribute('tabindex','0'));
 })();
 
-  // —— Math Stories：星标切换（收藏/取消收藏） —— //
-  function syncStoryStars(){
+// —— Math Stories：星标切换（收藏/取消收藏） —— //
+  window.syncStoryStars = function(){
     const items = load().filter(i=>i.type==='story');
     const titles = new Set(items.map(i=>i.title));
     document.querySelectorAll('.book-item').forEach(card=>{
@@ -71,7 +71,7 @@ window.toggleTheme = toggleTheme;
       if (!btn) return;
       if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
     });
-  }
+  };
 
   document.querySelectorAll('.book-item').forEach(card=>{
     if (card.querySelector('.collect-btn')) return;
@@ -93,11 +93,10 @@ window.toggleTheme = toggleTheme;
       }else{
         items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
       }
-      save(items); render(); syncStoryStars();
+      save(items); render(); window.syncStoryStars();
     });
   });
-
-
+    
 // =======================
 // Math Tutor UI 逻辑（修复版）
 // =======================
@@ -687,6 +686,7 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
+
 
 
 
