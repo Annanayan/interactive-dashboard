@@ -43,18 +43,18 @@ window.toggleTheme = toggleTheme;
   const input = document.getElementById('mv-input');
   if (!messages || !form || !input) return;
 
-  // ★ 把它换成后端地址
-  const ENDPOINT = 'http://localhost:3000/chat';
+  // ★ 后端地址
+  const ENDPOINT = 'http://localhost:3000/simple-chat';
 
-  // —— 关键：保持“AI Assistant”标签页处于激活 —— //
+  // —— 保持“AI Assistant”标签页处于激活 —— //
   function keepAssistantActive() {
     const assistant = document.getElementById('AI Assistant');
     if (!assistant) return;
-    // 给 AI Assistant 加 active，其他移除
+    // 给 AI Assistant 加 active 
     document.querySelectorAll('.content').forEach(sec => {
       sec.classList.toggle('active', sec === assistant);
     });
-    // 侧栏按钮高亮也同步（可选）
+    // 侧栏按钮高亮也同步 
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.content === 'AI Assistant');
     });
@@ -377,42 +377,53 @@ window.toggleTheme = toggleTheme;
     }
   });
 
+
   // —— Math Stories：星标切换（收藏/取消收藏） —— //
-  function syncStoryStars(){
-    const items = load().filter(i=>i.type==='story');
-    const titles = new Set(items.map(i=>i.title));
+  (function() {
+    const STORE_KEY = 'mv_collection_v1';
+    const loadItems = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+    const saveItems = (arr) => localStorage.setItem(STORE_KEY, JSON.stringify(arr));
+    
+    window.syncStoryStars = function(){
+      const items = loadItems().filter(i=>i.type==='story');
+      const titles = new Set(items.map(i=>i.title));
+      document.querySelectorAll('.book-item').forEach(card=>{
+        const title = card.querySelector('.book-title')?.textContent?.trim();
+        const btn = card.querySelector('.collect-btn');
+        if (!btn) return;
+        if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
+      });
+    };
+  
+    // 添加收藏按钮
     document.querySelectorAll('.book-item').forEach(card=>{
-      const title = card.querySelector('.book-title')?.textContent?.trim();
-      const btn = card.querySelector('.collect-btn');
-      if (!btn) return;
-      if (titles.has(title)) btn.classList.add('on'); else btn.classList.remove('on');
+      if (card.querySelector('.collect-btn')) return;
+      const btn = document.createElement('button');
+      btn.className='collect-btn'; btn.title='Collect';
+      btn.innerHTML = '<i class="fas fa-star"></i>';
+      card.appendChild(btn);
     });
-  }
-
-  document.querySelectorAll('.book-item').forEach(card=>{
-    if (card.querySelector('.collect-btn')) return;
-    const btn = document.createElement('button');
-    btn.className='collect-btn'; btn.title='Collect';
-    btn.innerHTML = '<i class="fas fa-star"></i>';
-    card.appendChild(btn);
-  });
-
-  // 绑定切换
-  document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const card  = btn.closest('.book-item');
-      const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
-      const items = load();
-      const idx   = items.findIndex(i=>i.type==='story' && i.title===title);
-      if (idx>=0){
-        items.splice(idx,1);               // 取消收藏
-      }else{
-        items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
-      }
-      save(items); render(); syncStoryStars();
+  
+    // 绑定切换事件
+    document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const card  = btn.closest('.book-item');
+        const title = card.querySelector('.book-title')?.textContent?.trim() || 'Story';
+        const items = loadItems();
+        const idx   = items.findIndex(i=>i.type==='story' && i.title===title);
+        if (idx>=0){
+          items.splice(idx,1);
+        }else{
+          items.push({ id:'s_'+Date.now(), type:'story', title, content:'Saved from Math Stories', createdAt:Date.now() });
+        }
+        saveItems(items);
+        
+        // 触发 My Collection 的渲染（如果函数存在）
+        if (typeof window.renderCollection === 'function') window.renderCollection();
+        window.syncStoryStars();
+      });
     });
-  });
-
+  })();
   // —— Community Plaza：简单 feed 渲染（显示已分享的帖子） —— //
   function renderPlaza(){
     const plaza = document.getElementById('Community Plaza');
@@ -585,6 +596,8 @@ window.toggleTheme = toggleTheme;
 
   function render(){ FEED.innerHTML = all.map(cardHTML).join(''); }
   render();
+  // 将 render 函数暴露到全局
+  window.renderCollection = render;
 
   // 点击星标：收藏/取消收藏 + UI 同步
   FEED.addEventListener('click', (e)=>{
@@ -615,6 +628,7 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
+
 
 
 
