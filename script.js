@@ -434,7 +434,7 @@ window.toggleTheme = toggleTheme;
   function delItem(id){
     const items = load().filter(i=>i.id!==id); save(items); render(); // 取消收藏/删除
     // 同步 Math Stories 的星标
-    syncStoryStars();
+    if (window.syncStoryStars) window.syncStoryStars();
     if (modalEl && !modalEl.classList.contains('hidden') && viewingId===id) modalEl.classList.add('hidden');
   }
 
@@ -533,8 +533,8 @@ window.toggleTheme = toggleTheme;
 
   // —— 首次渲染 —— //
   const mcBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.dataset.content === 'My Collection');
-  mcBtn?.addEventListener('click', ()=>{ render(); syncStoryStars(); });
-  if (document.getElementById('My Collection')?.classList.contains('active')){ render(); syncStoryStars(); }
+  mcBtn?.addEventListener('click', ()=>{ render(); if(window.syncStoryStars) window.syncStoryStars(); });
+  if (document.getElementById('My Collection')?.classList.contains('active')){ render(); if(window.syncStoryStars) window.syncStoryStars(); }
 })();
 
 
@@ -686,6 +686,7 @@ window.toggleTheme = toggleTheme;
     render();
   });
 })();
+
 
 
 
