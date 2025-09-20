@@ -1199,7 +1199,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
           <section class="tile-card profile span-4">
             <div class="tile-head"><h3>${username}'s Learning Profile</h3></div>
             <div class="profile-body">
-              <img class="profile-avatar" src="./assets/student.png" alt="avatar" onerror="this.style.display='none'">
+              <img class="profile-avatar" src="./images/student.png" alt="avatar" onerror="this.style.display='none'">
               <ul class="profile-meta">
                 <li><span>Member Since</span><b>${formatDate(stats.basicInfo?.created_at)}</b></li>
                 <li><span>Total Logins</span><b>${stats.basicInfo?.login_count || 0}</b></li>
@@ -1348,3 +1348,4 @@ buttons.forEach(btn => {
     }
   });
 });
+
