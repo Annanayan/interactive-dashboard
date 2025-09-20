@@ -10,6 +10,79 @@
   <script src="https://kit.fontawesome.com/787740fea7.js" crossorigin="anonymous"></script>
 </head>
 <body>
+  <!-- 登录/注册页面 -->
+  <div id="auth-page" class="auth-container">
+    <div class="auth-content">
+      <!-- Logo 和标题 -->
+      <div class="auth-header">
+        <img src="images/logo.png" class="auth-logo" alt="Math Village" />
+        <h1 class="auth-title">Math Village</h1>
+      </div>
+
+      <!-- 中间的卡片区域 -->
+      <div class="auth-card">
+        <!-- 左侧：招手地球人 -->
+        <div class="auth-mascot">
+          <img src="images/comic earth.png" alt="Welcome" class="mascot-image" />
+        </div>
+
+        <!-- 右侧：表单 -->
+        <div class="auth-form-container">
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-mode="register">Register</button>
+            <button class="auth-tab" data-mode="login">Login</button>
+          </div>
+
+          <!-- 注册表单 -->
+          <form id="register-form" class="auth-form active">
+            <input type="text" id="reg-username" placeholder="Username" required />
+            <span id="username-error" class="error-message"></span>
+            <input type="password" id="reg-password" placeholder="Password" required />
+            <span id="password-error" class="error-message">Password must be at least 6 characters</span>
+            <button type="submit" class="auth-submit">Register</button>
+          </form>
+
+          <!-- 登录表单 -->
+          <form id="login-form" class="auth-form">
+            <input type="text" id="login-username" placeholder="Username" required />
+            <input type="password" id="login-password" placeholder="Password" required />
+            <span id="login-error" class="error-message"></span>
+            <button type="submit" class="auth-submit">Login</button>
+          </form>
+
+          <a href="#" class="auth-switch" id="auth-switch">Login instead</a>
+        </div>
+      </div>
+
+      <!-- 底部功能展示 -->
+      <div class="auth-features">
+        <div class="feature-item" style="background: #64B2D8;">
+          <i class="fas fa-brain"></i>
+          <span>Daily Practice</span>
+        </div>
+        <div class="feature-item" style="background: #58B65F;">
+          <i class="fas fa-medal"></i>
+          <span>Daily Review</span>
+        </div>
+        <div class="feature-item" style="background: #F89F00;">
+          <i class="fas fa-robot"></i>
+          <span>AI Assistant</span>
+        </div>
+        <div class="feature-item" style="background: #EA240B;">
+          <i class="fas fa-book-open"></i>
+          <span>Math Stories</span>
+        </div>
+        <div class="feature-item" style="background: #4360AF;">
+          <i class="fas fa-star"></i>
+          <span>My Collection</span>
+        </div>
+        <div class="feature-item" style="background: #3384B9;">
+          <i class="fas fa-users"></i>
+          <span>Community Plaza</span>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="container">
     <!-- ▸▸▸ 侧 栏 ◂◂◂ -->
     <aside class="sidebar">
@@ -33,7 +106,13 @@
       <header class="header-bar">
         <input type="text" placeholder="Search…" />
         <i class="fas fa-bell"></i>
-        <i class="fas fa-cog"></i>
+        <!-- 设置图标带下拉菜单，登出 -->
+        <div class="header-settings">
+          <i class="fas fa-cog" id="settings-icon"></i>
+          <div class="settings-dropdown hidden">
+            <button onclick="logoutUser()">Logout</button>
+          </div>
+        </div>
         <i class="fas fa-palette"></i>
         <div class="header-profile">
           <img src="images/Anna.png" class="profile-icon" />
@@ -46,16 +125,14 @@
 
       <section id="Daily Review" class="content hidden daily-review">
         <div class="dr-card" role="region" aria-labelledby="dr-title">
-            <h2 id="dr-title" class="dr-title">Hi, Anna!</h2>
 
             <p class="dr-lead">Welcome back! Let’s strengthen your math foundation.</p>
+            <p class="dr-line">                                                      </p>
 
-            <p class="dr-line">Math learning builds step by step</p>
-            <p class="dr-line">— today’s review helps you master what you’ve learned before.</p>
-            <p class="dr-line">Humans tend to forget,</p>
-            <p class="dr-line">— but smart reviewing makes memory stronger.</p>
-            <p class="dr-line">We’ve already gathered your recent tricky problems</p>
-            <p class="dr-line">— just follow along and boost your skills!</p>
+            <p class="dr-line">Math learning builds step by step — today’s review helps you master what you’ve learned before.</p>
+            <p class="dr-line">Humans tend to forget — but smart reviewing makes memory stronger.</p>
+            <p class="dr-line">We’ve already gathered your recent tricky problems — just follow along and boost your skills!</p>
+            <p class="dr-line"></p>
 
             <button class="dr-cta" id="start-review">Review</button>
           </div>
@@ -63,38 +140,56 @@
 
 
       <section id="Daily Practice" class="content hidden dp">
+    
         <div class="dp-board" role="region" aria-label="Practice map">
-            <!-- 地图 -->
-            <img src="images/math map_green.png" alt="Math Map" class="dp-map" />
+          <!-- 地图 -->
+             <img src="images/math map_green.png" alt="Math Map" class="dp-map" />
 
-            <!-- 钉子：用百分比定位（可按需微调 top/left） -->
-            <!-- ① 这个钉子直达 Voiceflow -->
-            <button class="dp-pin" style="top:58%; left:36%;"
-                    aria-label="Start today's practice"
-                    title="Start today's practice"
-                    data-url="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754">
-              <i class="fas fa-map-marker-alt"></i>
-              <span class="dp-pulse"></span>
-            </button>
+             <!-- 北美洲位置 - 带 Voiceflow 链接 -->
+             <button class="dp-pin" style="top:32%; left:22%;"
+                     aria-label="Start today's practice"
+                     title="Start today's practice"
+                     data-url="https://creator.voiceflow.com/prototype/67c20b63d2f15c9ea5e63754">
+               <i class="fas fa-map-marker-alt"></i>
+               <span class="dp-pulse"></span>
+             </button>
 
-            <!-- 其余示例钉子（占位，未绑定 URL，可按需增加/删除/改位置） -->
-            <button class="dp-pin" style="top:30%; left:48%;" aria-label="Algebra hub" title="Algebra hub">
-              <i class="fas fa-map-marker-alt"></i>
-            </button>
+             <!-- 南美洲位置 - Algebra -->
+             <button class="dp-pin" style="top:65%; left:28%;" 
+                     aria-label="Algebra hub" 
+                     title="Algebra hub">
+               <i class="fas fa-map-marker-alt"></i>
+             </button>
 
-            <button class="dp-pin" style="top:40%; left:62%;" aria-label="Geometry hub" title="Geometry hub">
-              <i class="fas fa-map-marker-alt"></i>
-            </button>
+             <!-- 欧洲位置 - Geometry -->
+             <button class="dp-pin" style="top:28%; left:48%;" 
+                     aria-label="Geometry hub" 
+                     title="Geometry hub">
+               <i class="fas fa-map-marker-alt"></i>
+             </button>
 
-            <button class="dp-pin" style="top:72%; left:83%;" aria-label="Calculus hub" title="Calculus hub">
-              <i class="fas fa-map-marker-alt"></i>
-            </button>
+             <!-- 非洲位置 - Number sense -->
+             <button class="dp-pin" style="top:52%; left:49%;" 
+                     aria-label="Number sense" 
+                     title="Number sense">
+               <i class="fas fa-map-marker-alt"></i>
+             </button>
 
-            <button class="dp-pin" style="top:52%; left:54%;" aria-label="Number sense" title="Number sense">
-              <i class="fas fa-map-marker-alt"></i>
-            </button>
+             <!-- 亚洲位置 - Calculus -->
+             <button class="dp-pin" style="top:35%; left:70%;" 
+                     aria-label="Calculus hub" 
+                     title="Calculus hub">
+               <i class="fas fa-map-marker-alt"></i>
+             </button>
+
+             <!-- 大洋洲位置 - Statistics -->
+             <button class="dp-pin" style="top:70%; left:82%;" 
+                     aria-label="Statistics hub" 
+                     title="Statistics hub">
+               <i class="fas fa-map-marker-alt"></i>
+             </button>
           </div>
-        </section>
+      </section>
 
       <section id="Math Stories"    class="content hidden">
         <div class="book-grid">
@@ -181,12 +276,6 @@
 
       
       <section id="AI Assistant" class="content hidden ai-assistant">
-         <!-- 顶部中心的图标 + 标题 -->
-        <div class="mv-hero">
-            <img src="images/logo.png" alt="Math Solver" class="mv-hero-logo" />
-            <h1 class="mv-hero-title">Math Solver</h1>
-        </div>
-        
         <div id="mv-chat" class="mv-card">
           <div id="mv-messages" class="mv-messages" aria-live="polite"></div>
 
@@ -215,6 +304,7 @@
 </div>
 
 </html>
+
 
 
 
