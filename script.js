@@ -1184,7 +1184,9 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
       console.error('Failed to load report:', error);
     }
   }
-  // 显示报告在主页 —— 新版卡片式仪表盘
+
+  
+  // 显示报告在主页 —— 两列大卡 + 赛博朋克风
   function displayReport(stats, report) {
     const mainPage = document.getElementById('MainPage');
     if (!mainPage) return;
@@ -1192,14 +1194,18 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
     const username = stats.basicInfo?.username || 'Student';
     const avgAcc = +(report.summary?.average_accuracy || 0);
   
-    const html = `
+    mainPage.innerHTML = `
       <div class="student-dashboard">
         <div class="dashboard-grid">
-          <!-- 1) Learning Profile -->
-          <section class="tile-card profile span-4">
+  
+          <!-- Row 1 -->
+          <section class="tile-card span-6">
             <div class="tile-head"><h3>${username}'s Learning Profile</h3></div>
             <div class="profile-body">
-              <img class="profile-avatar" src="./images/student.png" alt="avatar" onerror="this.style.display='none'">
+              <img class="profile-avatar" src="images/student.png"
+                   alt="avatar"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+              <div class="avatar-fallback">${(username||'S').charAt(0).toUpperCase()}</div>
               <ul class="profile-meta">
                 <li><span>Member Since</span><b>${formatDate(stats.basicInfo?.created_at)}</b></li>
                 <li><span>Total Logins</span><b>${stats.basicInfo?.login_count || 0}</b></li>
@@ -1209,14 +1215,13 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
             </div>
           </section>
   
-          <!-- 2) Hours Spent（周视角柱状图） -->
-          <section class="tile-card hours span-5">
+          <section class="tile-card span-6">
             <div class="tile-head"><h3>Hours Spent (last 7 days)</h3></div>
             ${generateHoursChart(stats.recentLogins || [])}
           </section>
   
-          <!-- 3) Performance（仪表盘） -->
-          <section class="tile-card perf span-3">
+          <!-- Row 2 -->
+          <section class="tile-card span-6">
             <div class="tile-head"><h3>Performance</h3></div>
             <div class="gauge" style="--value:${Math.min(100, Math.max(0, Math.round(avgAcc)))}">
               <div class="gauge-hole">
@@ -1226,8 +1231,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
             </div>
           </section>
   
-          <!-- 4) Learning Progress（关键指标） -->
-          <section class="tile-card progress span-6">
+          <section class="tile-card span-6">
             <div class="tile-head"><h3>Learning Progress</h3></div>
             <div class="mini-stats">
               <div class="mini"><span class="mini-label">Problems Solved</span><b>${report.summary?.total_solved || 0}</b></div>
@@ -1237,27 +1241,23 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
             </div>
           </section>
   
-          <!-- 5) Personalized Recommendations（保留） -->
-          <section class="tile-card recs span-6">
+          <!-- Row 3 -->
+          <section class="tile-card span-6">
             <div class="tile-head"><h3>Personalized Recommendations</h3></div>
-            <ul class="recommendations">
-              ${(report.recommendations || []).map(r => `<li>${r}</li>`).join('') || '<li>Keep up the good work!</li>'}
+            <ul class="donut-legend recommendations">
+              ${(report.recommendations || []).map(r=>`<li style="background:rgba(255,255,255,.55)">${r}</li>`).join('') || '<li>Keep up the good work!</li>'}
             </ul>
           </section>
   
-          <!-- 6) Page Engagement（替代“Most Visited Pages”，更聚焦参与度） -->
-          <section class="tile-card engagement span-12">
+          <section class="tile-card span-6">
             <div class="tile-head"><h3>Page Engagement</h3></div>
-            <ul class="engagement-list">
-              ${(stats.topPages || []).map(p => `<li><span>${p.page_name}</span><b>${p.visit_count}</b></li>`).join('') || '<li>No data yet</li>'}
-            </ul>
+            ${generateEngagementDonut(stats.topPages || [])}
           </section>
-        </div>
-      </div>
-    `;
   
-    mainPage.innerHTML = html; // 直接替换首页内容
+        </div>
+      </div>;
   }
+
   
 
   
@@ -1277,14 +1277,13 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
     return new Date(dateString).toLocaleDateString();
   }
   
-  // 周视角柱状图（将 recentLogins 的 time_spent 聚合到周一~周日）
+  // 周视角柱状图
   function generateHoursChart(logins) {
     const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const buckets = new Array(7).fill(0);
     (logins || []).forEach(l => {
-      const d = new Date(l.login_date);
-      const idx = isNaN(d) ? 0 : d.getDay();
-      buckets[idx] += (l.time_spent || 0) / 3600; // 转小时
+      const d = new Date(l.login_date); const i = isNaN(d) ? 0 : d.getDay();
+      buckets[i] += (l.time_spent || 0) / 3600;
     });
     const max = Math.max(1, ...buckets);
     return `
@@ -1293,11 +1292,32 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
           <div class="bar-item">
             <div class="bar" title="${v.toFixed(1)}h" style="height:${(v/max)*100}%"></div>
             <div class="label">${days[i]}</div>
-          </div>
-        `).join('')}
-      </div>
-    `;
+          </div>`).join('')}
+      </div>`;
   }
+  
+  // 饼图（Page Engagement → Donut）
+  function generateEngagementDonut(pages) {
+    const data = (pages || []).slice(0, 6);
+    const total = data.reduce((s,p)=> s + (p.visit_count||0), 0) || 1;
+    const colors = ['#22d3ee','#a78bfa','#f472b6','#fbbf24','#34d399','#60a5fa'];
+    let cursor = 0;
+    const seg = data.map((p,i) => {
+      const ang = (p.visit_count || 0) / total * 360;
+      const start = cursor; const end = cursor + ang; cursor = end;
+      return `${colors[i%colors.length]} ${start}deg ${end}deg`;
+    }).join(', ');
+  
+    const legend = data.map((p,i)=>`
+      <li><span class="swatch" style="background:${colors[i%colors.length]}"></span>
+          ${p.page_name} <b>${p.visit_count}</b></li>`).join('');
+  
+    return `<div class="donut-wrap">
+              <div class="donut" style="--segments:${seg}"></div>
+              <ul class="donut-legend">${legend || '<li>No data</li>'}</ul>
+            </div>`;
+  }
+
 
   
   // 导出函数到全局
@@ -1348,4 +1368,5 @@ buttons.forEach(btn => {
     }
   });
 });
+
 
