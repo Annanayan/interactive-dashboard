@@ -1255,7 +1255,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
           </section>
   
         </div>
-      </div>;
+      </div>`;
   }
 
   
@@ -1368,5 +1368,6 @@ buttons.forEach(btn => {
     }
   });
 });
+
 
 
