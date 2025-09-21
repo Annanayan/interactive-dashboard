@@ -1,3 +1,6 @@
+// 后端基址（无尾部斜杠）
+const API_BASE = 'https://https://math-village-backend-server.onrender.com';
+
 // ========== 用户认证系统 ==========
 (function initAuth() {
   const authPage = document.getElementById('auth-page');
@@ -60,7 +63,7 @@
     const errorEl = document.getElementById('username-error');
 
     try {
-      const response = await fetch('https://math-village-backend.onrender.com/', {
+      const response = await fetch('https://math-village-backend.onrender.com/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -97,7 +100,7 @@
     const errorEl = document.getElementById('login-error');
 
     try {
-      const response = await fetch('https://math-village-backend.onrender.com/', {
+      const response = await fetch('https://math-village-backend.onrender.com/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -294,7 +297,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
   const input = document.getElementById('mv-input');
   if (!messages || !form || !input) return;
 
-  const ENDPOINT = 'https://math-village-backend.onrender.com/';
+  const ENDPOINT = 'https://math-village-backend.onrender.com/chat';
 
   // 保持 AI Assistant 页面激活
   function keepAssistantActive() {
@@ -928,7 +931,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
 
 (function initTracking() {
   // 配置
-  const API_BASE = 'https://math-village-backend.onrender.com/';
+  const API_BASE = 'https://math-village-backend.onrender.com';
   let currentPage = 'MainPage';
   let pageStartTime = Date.now();
   let lastActivityTime = Date.now();
@@ -1143,7 +1146,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
 
 // ========== 学习报告展示系统 ==========
 (function initLearningReport() {
-  const API_BASE = 'https://math-village-backend.onrender.com/';
+  const API_BASE = 'https://math-village-backend.onrender.com';
   
   // 获取认证令牌
   function getAuthHeaders() {
@@ -1368,6 +1371,7 @@ buttons.forEach(btn => {
     }
   });
 });
+
 
 
 
