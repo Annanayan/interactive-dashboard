@@ -60,7 +60,7 @@
     const errorEl = document.getElementById('username-error');
 
     try {
-      const response = await fetch('http://localhost:3000/register', {
+      const response = await fetch('https://math-village-backend.onrender.com/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -97,7 +97,7 @@
     const errorEl = document.getElementById('login-error');
 
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch('https://math-village-backend.onrender.com/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -294,7 +294,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
   const input = document.getElementById('mv-input');
   if (!messages || !form || !input) return;
 
-  const ENDPOINT = 'http://localhost:3000/chat';
+  const ENDPOINT = 'https://math-village-backend.onrender.com/';
 
   // 保持 AI Assistant 页面激活
   function keepAssistantActive() {
@@ -1368,6 +1368,7 @@ buttons.forEach(btn => {
     }
   });
 });
+
 
 
 
