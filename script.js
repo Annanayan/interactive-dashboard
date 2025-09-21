@@ -60,7 +60,7 @@
     const errorEl = document.getElementById('username-error');
 
     try {
-      const response = await fetch('https://math-village-backend.onrender.com/register', {
+      const response = await fetch('https://math-village-backend.onrender.com/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -97,7 +97,7 @@
     const errorEl = document.getElementById('login-error');
 
     try {
-      const response = await fetch('https://math-village-backend.onrender.com/login', {
+      const response = await fetch('https://math-village-backend.onrender.com/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -1368,6 +1368,7 @@ buttons.forEach(btn => {
     }
   });
 });
+
 
 
 
