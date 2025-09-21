@@ -928,7 +928,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
 
 (function initTracking() {
   // 配置
-  const API_BASE = 'http://localhost:3000';
+  const API_BASE = 'https://math-village-backend.onrender.com/';
   let currentPage = 'MainPage';
   let pageStartTime = Date.now();
   let lastActivityTime = Date.now();
@@ -1143,7 +1143,7 @@ document.querySelectorAll('.book-item .collect-btn').forEach(btn=>{
 
 // ========== 学习报告展示系统 ==========
 (function initLearningReport() {
-  const API_BASE = 'http://localhost:3000';
+  const API_BASE = 'https://math-village-backend.onrender.com/';
   
   // 获取认证令牌
   function getAuthHeaders() {
@@ -1368,6 +1368,7 @@ buttons.forEach(btn => {
     }
   });
 });
+
 
 
 
